@@ -5,6 +5,42 @@
 - Node.js 18+
 - MongoDB đang chạy (local hoặc Atlas)
 
+Nếu chưa có Node.js hoặc MongoDB trên máy, dùng Docker theo phần bên dưới.
+
+## Chạy bằng Docker
+
+Từ thư mục gốc của project:
+
+```bash
+docker compose up --build
+```
+
+Mở trình duyệt: **http://localhost:3000/html/login.html**
+
+Nạp dữ liệu mẫu:
+
+```bash
+docker compose run --rm seed
+```
+
+Sau khi seed, đăng nhập admin:
+
+```text
+admin@fbu.edu.vn / Admin@2025
+```
+
+Dừng app:
+
+```bash
+docker compose down
+```
+
+Xóa luôn dữ liệu MongoDB đã lưu trong Docker volume:
+
+```bash
+docker compose down -v
+```
+
 ## Cài đặt
 
 ```bash
