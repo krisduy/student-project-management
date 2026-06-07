@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sinh Viên – Cổng Giảng Viên FBU</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="stylesheet" href="/css/teacher.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <div class="logo-mark">F</div>
+          <div class="logo-text"><span class="logo-name">FBU</span><span class="logo-sub">Teacher Portal</span></div>
+        </div>
+        <nav class="sidebar-nav">
+          <span class="nav-section-label">Menu</span>
+          <a href="teacher-portal.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+
+          <a href="teacher-students.html" class="nav-item active"><i class="fa-solid fa-user-graduate"></i><span>Sinh Viên</span></a>
+          <a href="teacher-submissions.html" class="nav-item"><i class="fa-solid fa-inbox"></i><span>Bài Nộp & Duyệt</span><span class="nav-badge" id="navBadgePending" style="display:none">0</span></a>
+          <a href="teacher-grading.html" class="nav-item"><i class="fa-solid fa-star-half-stroke"></i><span>Chấm Điểm</span><span class="nav-badge" id="navBadgeGrading" style="display:none">0</span></a>
+          <span class="nav-section-label" style="margin-top:12px">Tài khoản</span>
+          <a href="teacher-profile.html" class="nav-item"><i class="fa-solid fa-user"></i><span>Hồ Sơ</span></a>
+        </nav>
+        <div class="sidebar-user">
+          <div class="sidebar-user-inner">
+            <div class="user-avatar">GV</div>
+            <div class="user-info"><span class="user-name">Giảng Viên</span><span class="user-role">Giảng Viên</span></div>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;justify-content:center;margin-top:8px" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất</button>
+        </div>
+      </aside>
+      <main class="main-content">
+        <header class="top-bar">
+          <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+          <div class="top-bar-title"><h1>Sinh Viên Phụ Trách</h1><p>Danh sách sinh viên trong đồ án của bạn</p></div>
+        </header>
+        <div class="page-body" id="pageBody"></div>
+      </main>
+    </div>
+    <div class="modal-overlay" id="modalSvDetail">
+      <div class="modal" style="width:520px">
+        <div class="modal-header"><h3>Thông Tin Sinh Viên</h3><button class="modal-close" onclick="closeModal('modalSvDetail')"><i class="fa-solid fa-xmark"></i></button></div>
+        <div id="svDetailContent"></div>
+        <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modalSvDetail')">Đóng</button></div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="modalProjDetail">
+      <div class="modal" style="width:560px">
+        <div class="modal-header"><h3>Chi Tiết Đồ Án</h3><button class="modal-close" onclick="closeModal('modalProjDetail')"><i class="fa-solid fa-xmark"></i></button></div>
+        <div id="projDetailContent"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('modalProjDetail')">Đóng</button>
+          <button class="btn btn-primary" id="goGradeBtn"><i class="fa-solid fa-star-half-stroke"></i> Chấm Điểm</button>
+        </div>
+      </div>
+    </div>
+    <script src="/js/api.js"></script>
+    <script src="/js/data.js"></script>
+    <script src="/js/teacher-common.js"></script>
+    <script src="/js/teacher-pages.js"></script>
+    <script src="/js/main.js"></script>
+    <script>document.addEventListener("DOMContentLoaded", () => initTeacherPage("students"));</script>
+  </body>
+</html>

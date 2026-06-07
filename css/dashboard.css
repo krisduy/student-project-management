@@ -1,0 +1,111 @@
+/* =============================================
+   FBU Student Portal – dashboard.css (Enhanced)
+   ============================================= */
+
+/* Stats grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-bottom: 24px;
+}
+@media (max-width: 1100px) { .stats-grid { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 600px)  { .stats-grid { grid-template-columns: 1fr; } }
+
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px 22px;
+  display: flex; align-items: center; gap: 16px;
+  position: relative; overflow: hidden;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(91,124,246,0.4), transparent);
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--border2); }
+
+.stat-icon {
+  width: 48px; height: 48px;
+  background: rgba(91,124,246,0.1);
+  border: 1px solid rgba(91,124,246,0.15);
+  border-radius: 13px; display: flex; align-items: center; justify-content: center;
+  font-size: 20px; color: var(--accent); flex-shrink: 0;
+}
+
+.stat-info { flex: 1; }
+.stat-value {
+  display: block; font-family: 'Space Grotesk', sans-serif;
+  font-size: 28px; font-weight: 700; line-height: 1; letter-spacing: -0.5px;
+}
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 5px; display: block; }
+
+.stat-trend {
+  font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 8px;
+}
+.stat-trend.up    { background: rgba(16,185,129,.12); color: #34D399; }
+.stat-trend.down  { background: rgba(244,63,94,.12); color: #FB7185; }
+.stat-trend.neutral { background: rgba(139,144,160,.08); color: var(--text2); }
+
+/* Dashboard layout grid */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+}
+@media (max-width: 1050px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+/* Donut chart */
+.donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+#statusChart { flex-shrink: 0; }
+.donut-legend { display: flex; flex-direction: column; gap: 10px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-label { color: var(--text2); }
+.legend-val { margin-left: auto; font-weight: 600; padding-left: 12px; }
+
+/* Recent list */
+.recent-list { display: flex; flex-direction: column; gap: 8px; }
+.recent-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; background: var(--bg3);
+  border-radius: 11px; transition: all .15s; cursor: pointer;
+  border: 1px solid transparent;
+}
+.recent-item:hover { border-color: var(--border); background: var(--bg4); }
+
+.ri-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+  background: rgba(91,124,246,.12); color: var(--accent);
+}
+.ri-body { flex: 1; min-width: 0; }
+.ri-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ri-sub   { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.ri-right { text-align: right; flex-shrink: 0; }
+.ri-date  { font-size: 11px; color: var(--text3); }
+
+/* Deadline list */
+#deadlineList { display: flex; flex-direction: column; gap: 10px; }
+.dl-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px; background: var(--bg3); border-radius: 11px;
+  border: 1px solid var(--border); transition: border-color .2s;
+}
+.dl-item:hover { border-color: var(--border2); }
+
+.dl-date {
+  width: 46px; height: 46px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 11px; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.dl-day  { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; line-height: 1; }
+.dl-mon  { font-size: 9px; color: var(--text3); text-transform: uppercase; }
+.dl-body { flex: 1; }
+.dl-title{ font-size: 13px; font-weight: 600; }
+.dl-sub  { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.dl-urgent .dl-day { color: var(--red); }

@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sinh Viên – FBU</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      .avatar-picker {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+      .avatar-circle {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        font-weight: 800;
+        color: #fff;
+        font-family: "Syne", sans-serif;
+        border: 3px solid var(--border);
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        overflow: hidden;
+      }
+      .avatar-circle:hover {
+        border-color: var(--accent);
+        transform: scale(1.05);
+      }
+      .avatar-circle input[type="file"] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+      }
+      .avatar-hint {
+        font-size: 11px;
+        color: var(--text2);
+      }
+
+      .modal-steps {
+        display: flex;
+        gap: 0;
+        margin-bottom: 22px;
+        border-bottom: 1px solid var(--border);
+      }
+      .mstep-btn {
+        flex: 1;
+        padding: 11px 6px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: "Noto Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text3);
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .mstep-btn.active {
+        color: var(--accent);
+        border-bottom-color: var(--accent);
+      }
+      .mstep-btn.done {
+        color: var(--green);
+      }
+      .mstep-btn i {
+        font-size: 12px;
+      }
+
+      .form-section {
+        display: none;
+        animation: fadeSlide 0.22s ease;
+      }
+      .form-section.active {
+        display: block;
+      }
+      @keyframes fadeSlide {
+        from {
+          opacity: 0;
+          transform: translateX(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .info-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0 14px;
+      }
+
+      .gpa-display {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 12px;
+        background: var(--bg3);
+        border-radius: 8px;
+        margin-top: 5px;
+      }
+      .gpa-bar {
+        flex: 1;
+        height: 5px;
+        background: var(--bg2);
+        border-radius: 3px;
+        overflow: hidden;
+      }
+      .gpa-fill {
+        height: 100%;
+        border-radius: 3px;
+        transition:
+          width 0.35s,
+          background 0.35s;
+      }
+
+      .proj-option {
+        padding: 10px 14px;
+        border-radius: 10px;
+        background: var(--bg3);
+        border: 1.5px solid var(--border);
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .proj-option:hover {
+        border-color: rgba(79, 110, 247, 0.4);
+      }
+      .proj-option.selected {
+        border-color: var(--accent);
+        background: rgba(79, 110, 247, 0.1);
+      }
+
+      .import-zone {
+        border: 2px dashed var(--border);
+        border-radius: 14px;
+        padding: 28px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .import-zone:hover {
+        border-color: var(--accent);
+        background: rgba(79, 110, 247, 0.04);
+      }
+      .import-zone i {
+        font-size: 32px;
+        color: var(--text3);
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .qs-grid {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+      .qs-box {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex: 1;
+        min-width: 150px;
+      }
+      .qs-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+      }
+      .qs-val {
+        font-family: "Syne", sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        display: block;
+      }
+      .qs-lbl {
+        font-size: 11px;
+        color: var(--text2);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <div class="logo-mark">F</div>
+          <div class="logo-text">
+            <span class="logo-name">FBU</span
+            ><span class="logo-sub">Project System</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="index.html" class="nav-item"
+            ><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a
+          >
+          <a href="students.html" class="nav-item active"
+            ><i class="fa-solid fa-user-graduate"></i><span>Sinh Viên</span></a
+          >
+          <a href="projects.html" class="nav-item"
+            ><i class="fa-solid fa-folder-open"></i><span>Đồ Án</span></a
+          >
+          <a href="teachers.html" class="nav-item"
+            ><i class="fa-solid fa-chalkboard-user"></i
+            ><span>Giảng Viên</span></a
+          >
+          <a href="grading.html" class="nav-item"
+            ><i class="fa-solid fa-star-half-stroke"></i
+            ><span>Duyệt Điểm</span></a
+          >
+          <a href="accounts.html" class="nav-item"
+            ><i class="fa-solid fa-users-gear"></i><span>Tài Khoản</span></a
+          >
+          <a href="reports.html" class="nav-item"
+            ><i class="fa-solid fa-chart-pie"></i><span>Báo Cáo</span></a
+          >
+        </nav>
+        <div class="sidebar-user">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Admin FBU</span
+            ><span class="user-role">Quản trị viên</span>
+          </div>
+          <button
+            class="btn btn-secondary"
+            style="width: 100%; margin-top: 8px"
+            onclick="logout()"
+          >
+            Đăng xuất
+          </button>
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="top-bar">
+          <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="top-bar-title">
+            <h1>Quản Lý Sinh Viên</h1>
+            <p>Danh sách & hồ sơ sinh viên đồ án</p>
+          </div>
+          <div class="top-bar-actions">
+            <button
+              class="btn btn-secondary"
+              onclick="openModal('modalImport')"
+            >
+              <i class="fa-solid fa-file-import"></i> Import CSV
+            </button>
+            <button class="btn btn-primary" onclick="openAddModal()">
+              <i class="fa-solid fa-user-plus"></i> Thêm Sinh Viên
+            </button>
+          </div>
+        </header>
+
+        <div class="page-body">
+          <!-- Quick stats -->
+          <div class="qs-grid" id="quickStats"></div>
+
+          <!-- Toolbar -->
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <div class="search-bar" style="flex: 1; max-width: 320px">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Tên, MSSV, email..."
+                  oninput="filterStudents()"
+                />
+              </div>
+              <select
+                class="form-control"
+                id="filterClass"
+                onchange="filterStudents()"
+                style="width: 140px"
+              >
+                <option value="">Tất cả lớp</option>
+              </select>
+              <select
+                class="form-control"
+                id="filterStatus"
+                onchange="filterStudents()"
+                style="width: 140px"
+              >
+                <option value="">Trạng thái</option>
+                <option value="active">Hoạt Động</option>
+                <option value="warning">Cảnh Báo</option>
+                <option value="suspended">Đình Chỉ</option>
+              </select>
+              <select
+                class="form-control"
+                id="filterProject"
+                onchange="filterStudents()"
+                style="width: 140px"
+              >
+                <option value="">Đồ án</option>
+                <option value="yes">Có đồ án</option>
+                <option value="no">Chưa có</option>
+              </select>
+            </div>
+            <div class="toolbar-right">
+              <span
+                id="resultCount"
+                style="font-size: 13px; color: var(--text2); align-self: center"
+              ></span>
+              <button class="btn btn-secondary" onclick="exportStudentCSV()">
+                <i class="fa-solid fa-download"></i> Xuất CSV
+              </button>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 0">
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 40px">
+                      <input
+                        type="checkbox"
+                        id="checkAll"
+                        onchange="toggleAll(this)"
+                      />
+                    </th>
+                    <th>Sinh Viên</th>
+                    <th>Lớp</th>
+                    <th>Liên Hệ</th>
+                    <th>GPA</th>
+                    <th>Trạng Thái</th>
+                    <th>Đồ Án</th>
+                    <th>Thao Tác</th>
+                  </tr>
+                </thead>
+                <tbody id="studentBody"></tbody>
+              </table>
+            </div>
+            <!-- Bulk action bar -->
+            <div
+              id="bulkBar"
+              style="
+                display: none;
+                padding: 12px 20px;
+                border-top: 1px solid var(--border);
+                background: rgba(79, 110, 247, 0.06);
+                align-items: center;
+                gap: 12px;
+              "
+            >
+              <span
+                id="bulkCount"
+                style="font-size: 13px; font-weight: 600; color: var(--accent)"
+              ></span>
+              <button
+                class="btn btn-secondary"
+                style="padding: 6px 12px; font-size: 12px"
+                onclick="bulkAction('active')"
+              >
+                ✓ Kích hoạt
+              </button>
+              <button
+                class="btn btn-secondary"
+                style="padding: 6px 12px; font-size: 12px"
+                onclick="bulkAction('warning')"
+              >
+                ⚠ Cảnh báo
+              </button>
+              <button
+                class="btn btn-danger"
+                style="padding: 6px 12px; font-size: 12px"
+                onclick="bulkAction('delete')"
+              >
+                <i class="fa-solid fa-trash"></i> Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- ======== MODAL THÊM / SỬA SINH VIÊN (3 bước) ======== -->
+    <div class="modal-overlay" id="modalStudent">
+      <div
+        class="modal"
+        style="width: 600px; max-height: 92vh; overflow-y: auto; padding: 28px"
+      >
+        <div class="modal-header">
+          <h3 id="modalTitle">Thêm Sinh Viên Mới</h3>
+          <button class="modal-close" onclick="closeAddModal()">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="modal-steps">
+          <button class="mstep-btn active" id="mstep1" onclick="goMStep(1)">
+            <i class="fa-solid fa-id-card"></i> Cá Nhân
+          </button>
+          <button class="mstep-btn" id="mstep2" onclick="goMStep(2)">
+            <i class="fa-solid fa-graduation-cap"></i> Học Tập
+          </button>
+          <button class="mstep-btn" id="mstep3" onclick="goMStep(3)">
+            <i class="fa-solid fa-folder-open"></i> Đồ Án
+          </button>
+        </div>
+
+        <input type="hidden" id="editId" />
+
+        <!-- BƯỚC 1: Thông tin cá nhân -->
+        <div class="form-section active" id="msec1">
+          <div class="avatar-picker">
+            <div class="avatar-circle" id="avatarCircle">
+              <span id="avatarInitials">?</span>
+              <input
+                type="file"
+                id="avatarInput"
+                accept="image/*"
+                onchange="handleAvatar(event)"
+              />
+            </div>
+            <span class="avatar-hint"
+              ><i class="fa-solid fa-camera"></i> Click để tải ảnh đại
+              diện</span
+            >
+          </div>
+
+          <div class="info-row">
+            <div class="form-group">
+              <label>Họ và Tên *</label>
+              <input
+                class="form-control"
+                id="fName"
+                placeholder="Nguyễn Văn A"
+                oninput="updateInitials()"
+              />
+            </div>
+            <div class="form-group">
+              <label>MSSV *</label>
+              <input class="form-control" id="fSvId" placeholder="SV013" />
+            </div>
+          </div>
+
+          <div class="info-row">
+            <div class="form-group">
+              <label>Giới Tính</label>
+              <select class="form-control" id="fGender">
+                <option value="">— Chọn —</option>
+                <option>Nam</option>
+                <option>Nữ</option>
+                <option>Khác</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Ngày Sinh</label>
+              <input class="form-control" id="fDob" type="date" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input
+              class="form-control"
+              id="fEmail"
+              type="email"
+              placeholder="email@fbu.edu.vn"
+            />
+          </div>
+
+          <div class="info-row">
+            <div class="form-group">
+              <label>Số Điện Thoại</label>
+              <input
+                class="form-control"
+                id="fPhone"
+                type="tel"
+                placeholder="0901 234 567"
+              />
+            </div>
+            <div class="form-group">
+              <label>CCCD / CMND</label>
+              <input
+                class="form-control"
+                id="fCccd"
+                placeholder="079xxxxxxxx"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Địa Chỉ Thường Trú</label>
+            <input
+              class="form-control"
+              id="fAddress"
+              placeholder="Số nhà, Phường, Quận, Tỉnh/TP"
+            />
+          </div>
+
+          <div
+            style="display: flex; justify-content: flex-end; margin-top: 8px"
+          >
+            <button class="btn btn-primary" onclick="validateAndGoStep(2)">
+              Tiếp theo <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- BƯỚC 2: Học tập -->
+        <div class="form-section" id="msec2">
+          <div class="info-row">
+            <div class="form-group">
+              <label>Lớp *</label>
+              <select class="form-control" id="fClass"></select>
+            </div>
+            <div class="form-group">
+              <label>Khóa Học</label>
+              <select class="form-control" id="fCourse">
+                <option>K21</option>
+                <option>K22</option>
+                <option>K23</option>
+                <option>K24</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <div class="form-group">
+              <label>Chuyên Ngành</label>
+              <select class="form-control" id="fMajor">
+                <option value="">— Chọn —</option>
+                <option>Công Nghệ Thông Tin</option>
+                <option>Hệ Thống Thông Tin</option>
+                <option>Kỹ Thuật Phần Mềm</option>
+                <option>An Toàn Thông Tin</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Hình Thức Đào Tạo</label>
+              <select class="form-control" id="fMode">
+                <option>Chính Quy</option>
+                <option>Liên Thông</option>
+                <option>Vừa Học Vừa Làm</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <div class="form-group">
+              <label>GPA (0 – 4.0)</label>
+              <input
+                class="form-control"
+                id="fGpa"
+                type="number"
+                step="0.01"
+                min="0"
+                max="4"
+                placeholder="3.50"
+                oninput="updateGpaBar()"
+              />
+              <div class="gpa-display" id="gpaDisplay">
+                <div class="gpa-bar">
+                  <div class="gpa-fill" id="gpaFill"></div>
+                </div>
+                <span
+                  id="gpaLabel"
+                  style="
+                    font-size: 12px;
+                    font-weight: 600;
+                    min-width: 80px;
+                    text-align: right;
+                  "
+                ></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Số Tín Chỉ Tích Lũy</label>
+              <input
+                class="form-control"
+                id="fCredits"
+                type="number"
+                min="0"
+                placeholder="120"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Trạng Thái Học Vụ *</label>
+            <select class="form-control" id="fStatus">
+              <option value="active">Hoạt Động</option>
+              <option value="warning">Cảnh Báo Học Vụ</option>
+              <option value="suspended">Đình Chỉ</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Ghi Chú</label>
+            <textarea
+              class="form-control"
+              id="fNote"
+              rows="2"
+              placeholder="Thêm ghi chú nếu cần..."
+            ></textarea>
+          </div>
+
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              justify-content: flex-end;
+              margin-top: 8px;
+            "
+          >
+            <button class="btn btn-secondary" onclick="goMStep(1)">
+              <i class="fa-solid fa-arrow-left"></i> Quay lại
+            </button>
+            <button class="btn btn-primary" onclick="goMStep(3)">
+              Tiếp theo <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- BƯỚC 3: Phân công đồ án -->
+        <div class="form-section" id="msec3">
+          <p style="font-size: 13px; color: var(--text2); margin-bottom: 14px">
+            Chọn đồ án để phân công cho sinh viên
+            <strong id="assignName">này</strong>. Bỏ qua nếu chưa phân công.
+          </p>
+          <div id="projectOptions"></div>
+          <div
+            id="noProjectOpt"
+            style="
+              text-align: center;
+              padding: 28px;
+              color: var(--text3);
+              display: none;
+            "
+          >
+            <i
+              class="fa-solid fa-folder-open"
+              style="font-size: 28px; display: block; margin-bottom: 8px"
+            ></i>
+            Chưa có đồ án nào sẵn có để phân công
+          </div>
+
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              justify-content: flex-end;
+              margin-top: 16px;
+            "
+          >
+            <button class="btn btn-secondary" onclick="goMStep(2)">
+              <i class="fa-solid fa-arrow-left"></i> Quay lại
+            </button>
+            <button class="btn btn-primary" onclick="saveStudent()">
+              <i class="fa-solid fa-floppy-disk"></i> Lưu Sinh Viên
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Xem chi tiết -->
+    <div class="modal-overlay" id="modalDetail">
+      <div class="modal" style="width: 580px">
+        <div class="modal-header">
+          <h3>Hồ Sơ Sinh Viên</h3>
+          <button class="modal-close" onclick="closeModal('modalDetail')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div id="detailContent"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('modalDetail')">
+            Đóng
+          </button>
+          <button class="btn btn-primary" id="editFromDetail">Chỉnh Sửa</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Import CSV -->
+    <div class="modal-overlay" id="modalImport">
+      <div class="modal" style="width: 540px">
+        <div class="modal-header">
+          <h3>
+            <i
+              class="fa-solid fa-file-import"
+              style="color: var(--accent); margin-right: 8px"
+            ></i
+            >Import Sinh Viên từ CSV
+          </h3>
+          <button class="modal-close" onclick="closeModal('modalImport')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div
+          class="import-zone"
+          onclick="document.getElementById('csvFile').click()"
+        >
+          <input
+            type="file"
+            id="csvFile"
+            accept=".csv"
+            style="display: none"
+            onchange="handleCSV(event)"
+          />
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <p style="font-weight: 600; margin-bottom: 5px">
+            Kéo thả hoặc click để chọn file CSV
+          </p>
+          <p style="font-size: 12px; color: var(--text2)">
+            Định dạng: MSSV, Họ Tên, Lớp, Email, GPA
+          </p>
+        </div>
+        <div
+          class="card"
+          style="padding: 12px; margin-top: 14px; font-size: 12px"
+        >
+          <strong>📋 Mẫu dòng CSV:</strong><br />
+          <code style="color: var(--accent); font-size: 11px"
+            >SV013,Nguyễn Văn X,CNTT21A,x.nv@fbu.edu.vn,3.5</code
+          >
+        </div>
+        <div id="bulkPreview" style="display: none; margin-top: 14px">
+          <p
+            style="font-size: 13px; font-weight: 600; margin-bottom: 8px"
+            id="previewCount"
+          ></p>
+          <div
+            class="tbl-wrap"
+            style="max-height: 180px; overflow-y: auto; border-radius: 10px"
+          >
+            <table id="previewTable">
+              <thead>
+                <tr>
+                  <th>MSSV</th>
+                  <th>Họ Tên</th>
+                  <th>Lớp</th>
+                  <th>Email</th>
+                  <th>GPA</th>
+                </tr>
+              </thead>
+              <tbody id="previewBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal('modalImport')">
+            Hủy
+          </button>
+          <button
+            class="btn btn-primary"
+            id="importBtn"
+            style="display: none"
+            onclick="doImport()"
+          >
+            <i class="fa-solid fa-file-import"></i> Import Dữ Liệu
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/data.js"></script>
+    <script src="/js/students_enhanced.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

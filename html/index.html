@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FBU – Hệ Thống Quản Lý Đồ Án</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <div class="logo-mark">F</div>
+          <div class="logo-text">
+            <span class="logo-name">FBU</span>
+            <span class="logo-sub">Project System</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="index.html" class="nav-item active">
+            <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
+          </a>
+          <a href="students.html" class="nav-item">
+            <i class="fa-solid fa-user-graduate"></i><span>Sinh Viên</span>
+          </a>
+          <a href="projects.html" class="nav-item">
+            <i class="fa-solid fa-folder-open"></i><span>Đồ Án</span>
+          </a>
+          <a href="teachers.html" class="nav-item">
+            <i class="fa-solid fa-chalkboard-user"></i><span>Giảng Viên</span>
+          </a>
+          <a href="grading.html" class="nav-item">
+            <i class="fa-solid fa-star-half-stroke"></i><span>Duyệt Điểm</span>
+          </a>
+          <a href="reports.html" class="nav-item">
+            <i class="fa-solid fa-chart-pie"></i><span>Báo Cáo</span>
+          </a>
+          <a href="accounts.html" class="nav-item">
+            <i class="fa-solid fa-users-gear"></i><span>Tài Khoản</span>
+          </a>
+        </nav>
+        <div class="sidebar-user">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Admin FBU</span>
+            <span class="user-role">Quản trị viên</span>
+          </div>
+          <button class="btn btn-secondary" style="width:100%;margin-top:8px;" onclick="logout()">Đăng xuất</button>
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="main-content">
+        <header class="top-bar">
+          <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="top-bar-title">
+            <h1>Dashboard</h1>
+            <p>Tổng quan hệ thống đồ án – Học kỳ 2, 2024-2025</p>
+          </div>
+          <div class="top-bar-actions">
+            <button class="btn-icon">
+              <i class="fa-regular fa-bell"></i><span class="badge">3</span>
+            </button>
+            <button class="btn-icon">
+              <i class="fa-regular fa-envelope"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="page-body">
+          <!-- Stats -->
+          <section class="stats-grid">
+            <div class="stat-card" style="--accent: #4f6ef7">
+              <div class="stat-icon">
+                <i class="fa-solid fa-user-graduate"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="s-students">248</span>
+                <span class="stat-label">Sinh Viên</span>
+              </div>
+              <div class="stat-trend up">
+                <i class="fa-solid fa-arrow-trend-up"></i> +12
+              </div>
+            </div>
+            <div class="stat-card" style="--accent: #22c55e">
+              <div class="stat-icon">
+                <i class="fa-solid fa-folder-open"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="s-projects">74</span>
+                <span class="stat-label">Đồ Án</span>
+              </div>
+              <div class="stat-trend up">
+                <i class="fa-solid fa-arrow-trend-up"></i> +5
+              </div>
+            </div>
+            <div class="stat-card" style="--accent: #f59e0b">
+              <div class="stat-icon">
+                <i class="fa-solid fa-chalkboard-user"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="s-teachers">18</span>
+                <span class="stat-label">Giảng Viên</span>
+              </div>
+              <div class="stat-trend neutral">
+                <i class="fa-solid fa-minus"></i> ±0
+              </div>
+            </div>
+            <div class="stat-card" style="--accent: #ec4899">
+              <div class="stat-icon">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="s-done">31</span>
+                <span class="stat-label">Đã Hoàn Thành</span>
+              </div>
+              <div class="stat-trend up">
+                <i class="fa-solid fa-arrow-trend-up"></i> 42%
+              </div>
+            </div>
+          </section>
+
+          <!-- Charts + Recent -->
+          <section class="dashboard-grid">
+            <!-- Status Chart -->
+            <div class="card chart-card">
+              <div class="card-header">
+                <h2>Trạng Thái Đồ Án</h2>
+                <span class="card-badge">Học kỳ này</span>
+              </div>
+              <div class="donut-wrap">
+                <canvas id="statusChart" width="220" height="220"></canvas>
+                <div class="donut-legend" id="donutLegend"></div>
+              </div>
+            </div>
+
+            <!-- Recent Projects -->
+            <div class="card recent-card">
+              <div class="card-header">
+                <h2>Đồ Án Gần Đây</h2>
+                <a href="projects.html" class="link-more">Xem tất cả →</a>
+              </div>
+              <div class="recent-list" id="recentProjects"></div>
+            </div>
+
+            <!-- Score Distribution -->
+            <div class="card bar-card">
+              <div class="card-header">
+                <h2>Phân Bố Điểm Số</h2>
+                <span class="card-badge">74 đồ án</span>
+              </div>
+              <div class="bar-chart" id="barChart"></div>
+            </div>
+
+            <!-- Upcoming Deadlines -->
+            <div class="card deadline-card">
+              <div class="card-header">
+                <h2>Deadline Sắp Tới</h2>
+                <a href="projects.html" class="link-more">Xem tất cả →</a>
+              </div>
+              <div id="deadlineList"></div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/data.js"></script>
+    <script src="/js/dashboard.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

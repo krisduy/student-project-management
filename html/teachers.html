@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Giảng Viên – FBU</title>
+    <link rel="stylesheet" href="/css/main.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      .teacher-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+      .teacher-card {
+        background: var(--bg2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 22px;
+        text-align: center;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s,
+          border-color 0.2s;
+      }
+      .teacher-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+        border-color: rgba(79, 110, 247, 0.3);
+      }
+      .tc-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 800;
+        color: #fff;
+        margin: 0 auto 12px;
+      }
+      .tc-name {
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        line-height: 1.3;
+      }
+      .tc-dept {
+        font-size: 12px;
+        color: var(--text2);
+        margin: 4px 0 10px;
+      }
+      .tc-expertise {
+        background: var(--bg3);
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: 12px;
+        color: var(--accent);
+        display: inline-block;
+      }
+      .tc-stats {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
+      }
+      .tc-stat {
+        text-align: center;
+      }
+      .tc-stat-val {
+        font-family: "Syne", sans-serif;
+        font-size: 22px;
+        font-weight: 800;
+        display: block;
+      }
+      .tc-stat-lbl {
+        font-size: 11px;
+        color: var(--text2);
+      }
+      .tc-actions {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+          <div class="logo-mark">F</div>
+          <div class="logo-text">
+            <span class="logo-name">FBU</span
+            ><span class="logo-sub">Project System</span>
+          </div>
+        </div>
+        <nav class="sidebar-nav">
+          <a href="index.html" class="nav-item"
+            ><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a
+          >
+          <a href="students.html" class="nav-item"
+            ><i class="fa-solid fa-user-graduate"></i><span>Sinh Viên</span></a
+          >
+          <a href="projects.html" class="nav-item"
+            ><i class="fa-solid fa-folder-open"></i><span>Đồ Án</span></a
+          >
+          <a href="teachers.html" class="nav-item active"
+            ><i class="fa-solid fa-chalkboard-user"></i
+            ><span>Giảng Viên</span></a
+          >
+          <a href="grading.html" class="nav-item"
+            ><i class="fa-solid fa-star-half-stroke"></i
+            ><span>Duyệt Điểm</span></a
+          >
+          <a href="accounts.html" class="nav-item"
+            ><i class="fa-solid fa-users-gear"></i><span>Tài Khoản</span></a
+          >
+          <a href="reports.html" class="nav-item"
+            ><i class="fa-solid fa-chart-pie"></i><span>Báo Cáo</span></a
+          >
+        </nav>
+        <div class="sidebar-user">
+          <div class="user-avatar">AD</div>
+          <div class="user-info">
+            <span class="user-name">Admin FBU</span
+            ><span class="user-role">Quản trị viên</span>
+          </div>
+          <button
+            class="btn btn-secondary"
+            style="width: 100%; margin-top: 8px"
+            onclick="logout()"
+          >
+            Đăng xuất
+          </button>
+          <i class="fa-solid fa-ellipsis-vertical"></i>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="top-bar">
+          <button class="menu-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="top-bar-title">
+            <h1>Giảng Viên Hướng Dẫn</h1>
+            <p>Danh sách giảng viên trong hệ thống</p>
+          </div>
+          <div class="top-bar-actions">
+            <button class="btn btn-primary" onclick="openModal('modalTeacher')">
+              <i class="fa-solid fa-plus"></i> Thêm Giảng Viên
+            </button>
+          </div>
+        </header>
+
+        <div class="page-body">
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <div class="search-bar" style="flex: 1; max-width: 360px">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input
+                  type="text"
+                  id="searchInput"
+                  placeholder="Tìm giảng viên..."
+                  oninput="filterTeachers()"
+                />
+              </div>
+              <select
+                class="form-control"
+                id="filterDept"
+                onchange="filterTeachers()"
+                style="width: 140px"
+              >
+                <option value="">Tất cả khoa</option>
+              </select>
+            </div>
+            <span
+              id="resultCount"
+              style="font-size: 13px; color: var(--text2); align-self: center"
+            ></span>
+          </div>
+          <div class="teacher-grid" id="teacherGrid"></div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Modal Thêm / Sửa -->
+    <div class="modal-overlay" id="modalTeacher">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="modalTitle">Thêm Giảng Viên</h3>
+          <button class="modal-close" onclick="closeModal('modalTeacher')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <input type="hidden" id="editId" />
+        <div class="form-group">
+          <label>Họ và Tên *</label
+          ><input
+            class="form-control"
+            id="fName"
+            placeholder="TS. Nguyễn Văn A"
+          />
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px">
+          <div class="form-group">
+            <label>Email *</label
+            ><input
+              class="form-control"
+              id="fEmail"
+              type="email"
+              placeholder="gv@fbu.edu.vn"
+            />
+          </div>
+          <div class="form-group">
+            <label>Khoa *</label>
+            <select class="form-control" id="fDept">
+              <option value="CNTT">CNTT</option>
+              <option value="HTTT">HTTT</option>
+              <option value="KTPM">KTPM</option>
+            </select>
+          </div>
+          <div class="form-group" style="grid-column: span 2">
+            <label>Chuyên Môn</label
+            ><input
+              class="form-control"
+              id="fExpertise"
+              placeholder="AI/ML, Web Dev..."
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            class="btn btn-secondary"
+            onclick="closeModal('modalTeacher')"
+          >
+            Hủy
+          </button>
+          <button class="btn btn-primary" onclick="saveTeacher()">
+            <i class="fa-solid fa-floppy-disk"></i> Lưu
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/data.js"></script>
+    <script src="/js/teachers.js"></script>
+    <script src="/js/main.js"></script>
+  </body>
+</html>
