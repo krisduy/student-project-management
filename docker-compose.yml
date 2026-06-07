@@ -1,20 +1,24 @@
 services:
   app:
-    build: .
-    restart: unless-stopped
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: npm run dev
     environment:
       PORT: 3000
       MONGODB_URI: mongodb://mongo:27017/fbu_project
       JWT_SECRET: fbu_super_secret_key_change_in_production
     ports:
       - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     depends_on:
       mongo:
         condition: service_healthy
 
   mongo:
     image: mongo:7
-    restart: unless-stopped
     ports:
       - "27017:27017"
     volumes:
