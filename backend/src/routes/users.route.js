@@ -14,4 +14,28 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.post("/", async (req, res, next) => {
+  try {
+    await userController.createUser(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/:id", async (req, res, next) => {
+  try {
+    await userController.updateUser(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/:id", async (req, res, next) => {
+  try {
+    await userController.deleteUser(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

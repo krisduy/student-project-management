@@ -1,14 +1,14 @@
-require('dotenv').config();
-const express = require('express');
-const mongoose = require('mongoose');
-const connectDB = require('./src/config/db');
-const userRoutes = require('./src/routes/users.route');
+require("dotenv").config();
+const express = require("express");
+const mongoose = require("mongoose");
+const connectDB = require("./src/configs/db");
+const userRoutes = require("./src/routes/users.route");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use('/api/users', userRoutes);
+app.use("/api/users", userRoutes);
 
 function healthCheck(req, res) {
   const mongoConnected = mongoose.connection.readyState === 1;
@@ -16,18 +16,18 @@ function healthCheck(req, res) {
 
   res.status(status).json({
     ok: mongoConnected,
-    service: 'backend',
-    mongo: mongoConnected ? 'connected' : 'disconnected',
+    service: "backend",
+    mongo: mongoConnected ? "connected" : "disconnected",
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
   });
 }
 
-app.get('/health', healthCheck);
-app.get('/api/health', healthCheck);
+app.get("/health", healthCheck);
+app.get("/api/health", healthCheck);
 
-app.get('/api', (req, res) => {
-  res.json({ ok: true, message: 'Backend API is running' });
+app.get("/api", (req, res) => {
+  res.json({ ok: true, message: "Backend API is running" });
 });
 
 async function startServer() {
@@ -39,6 +39,6 @@ async function startServer() {
 }
 
 startServer().catch((error) => {
-  console.error('Failed to start backend:', error);
+  console.error("Failed to start backend:", error);
   process.exit(1);
 });
