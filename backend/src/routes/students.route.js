@@ -1,10 +1,13 @@
 const express = require("express");
 const StudentController = require("../controllers/students.controller");
 const StudentService = require("../services/students.service");
+const { authenticate, authorizeAdmin } = require("../middlewares/auth.middleware");
 
 const studentService = new StudentService();
 const studentController = new StudentController(studentService);
 const router = express.Router();
+
+router.use(authenticate, authorizeAdmin);
 
 router.get("/", async (req, res, next) => {
   try {
