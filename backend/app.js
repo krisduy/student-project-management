@@ -3,12 +3,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const connectDB = require("./src/configs/db");
 const userRoutes = require("./src/routes/users.route");
+const studentRoutes = require("./src/routes/students.route");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use("/api/users", userRoutes);
+app.use("/api/students", studentRoutes);
 
 function healthCheck(req, res) {
   const mongoConnected = mongoose.connection.readyState === 1;
