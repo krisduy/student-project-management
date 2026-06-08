@@ -24,12 +24,14 @@ class UserController {
           req.body.email,
           req.body.password,
           req.body.role,
+          req.body.student,
+          req.body.teacher,
         ),
       );
 
       res.status(201).json(newUser);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(error.statusCode || 500).json({ error: error.message });
     }
   }
 

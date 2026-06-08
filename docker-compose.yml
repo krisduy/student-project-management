@@ -1,4 +1,15 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      VITE_PROXY_TARGET: http://app:3000
+    ports:
+      - "5174:5174"
+    depends_on:
+      - app
+
   app:
     build:
       context: ./backend
@@ -18,6 +29,8 @@ services:
 
   mongo:
     image: mongo:7
+    logging:
+      driver: "none"
     ports:
       - "27017:27017"
     volumes:

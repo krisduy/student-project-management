@@ -15,6 +15,15 @@ class TeacherController {
     }
   }
 
+  async getTeacherOptions(req, res) {
+    try {
+      const teachers = await this.teacherService.getTeacherOptions();
+      res.json(teachers);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
   async createTeacher(req, res) {
     try {
       const newTeacher = await this.teacherService.createTeacher(
