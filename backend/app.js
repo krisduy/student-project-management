@@ -6,6 +6,7 @@ const authRoutes = require("./src/routes/auth.route");
 const userRoutes = require("./src/routes/users.route");
 const studentRoutes = require("./src/routes/students.route");
 const teacherRoutes = require("./src/routes/teachers.route");
+const topicRoutes = require("./src/routes/topics.route");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +16,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/teachers", teacherRoutes);
+app.use("/api/topics", topicRoutes);
 
 function healthCheck(req, res) {
   const mongoConnected = mongoose.connection.readyState === 1;

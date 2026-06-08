@@ -5,6 +5,10 @@ class TeacherService {
     return Teacher.find().populate("userId").lean();
   }
 
+  async getTeacherOptions() {
+    return Teacher.find().populate("userId").lean();
+  }
+
   async createTeacher(teacherDto) {
     const teacher = new Teacher({
       userId: teacherDto.userId,
