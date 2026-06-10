@@ -34,6 +34,12 @@ class TopicService {
   }
 
   async registerTopic(topicId, userId, teacherId) {
+    if (!teacherId) {
+      const error = new Error("Teacher is required");
+      error.statusCode = 400;
+      throw error;
+    }
+
     const student = await Student.findOne({ userId });
     if (!student) {
       const error = new Error("Student profile not found");
@@ -73,6 +79,17 @@ class TopicService {
     await topic.save();
 
     return this.getPopulateQuery(Topic.findById(topic._id)).lean();
+  }
+
+  async getStudentTopic(userId) {
+    const student = await Student.findOne({ userId });
+    if (!student) {
+      const error = new Error("Student profile not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return this.getPopulateQuery(Topic.findOne({ studentId: student._id })).lean();
   }
 
   async getTeacherTopics(userId) {

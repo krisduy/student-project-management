@@ -33,6 +33,19 @@ router.get(
   },
 );
 
+router.get(
+  "/my-registration",
+  authenticate,
+  authorizeRoles("student"),
+  async (req, res, next) => {
+    try {
+      await topicController.getStudentTopic(req, res);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 router.post(
   "/:id/register",
   authenticate,
