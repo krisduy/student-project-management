@@ -5,8 +5,12 @@ services:
       dockerfile: Dockerfile
     environment:
       VITE_PROXY_TARGET: http://app:3000
+      CHOKIDAR_USEPOLLING: "true"
     ports:
       - "5174:5174"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - app
 

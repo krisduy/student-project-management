@@ -74,3 +74,49 @@ export function deleteUser(id) {
     method: "DELETE",
   });
 }
+
+export function listTopics() {
+  return apiFetch("/topics");
+}
+
+export function createTopic(payload) {
+  return apiFetch("/topics", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateTopic(id, payload) {
+  return apiFetch(`/topics/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteTopic(id) {
+  return apiFetch(`/topics/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export function listStudents() {
+  return apiFetch("/students");
+}
+
+export function updateStudent(id, payload) {
+  return apiFetch(`/students/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function listTeachers() {
+  return apiFetch("/teachers");
+}
+
+export function updateTeacher(id, payload) {
+  return apiFetch(`/teachers/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
