@@ -120,3 +120,25 @@ export function updateTeacher(id, payload) {
     body: JSON.stringify(payload),
   });
 }
+
+export function listAvailableTopics(query = "") {
+  const params = new URLSearchParams();
+  if (query.trim()) params.set("q", query.trim());
+  const suffix = params.toString() ? `?${params.toString()}` : "";
+  return apiFetch(`/topics/available${suffix}`);
+}
+
+export function getMyTopicRegistration() {
+  return apiFetch("/topics/my-registration");
+}
+
+export function registerTopic(topicId, teacherId) {
+  return apiFetch(`/topics/${topicId}/register`, {
+    method: "POST",
+    body: JSON.stringify({ teacherId }),
+  });
+}
+
+export function listTeacherOptions() {
+  return apiFetch("/teachers/options");
+}

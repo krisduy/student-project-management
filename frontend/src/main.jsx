@@ -8,6 +8,7 @@ import AdminTopicsPage from "./pages/AdminTopicsPage.jsx";
 import AdminUsersPage from "./pages/AdminUsersPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RoleHomePage from "./pages/RoleHomePage.jsx";
+import StudentTopicsPage from "./pages/StudentTopicsPage.jsx";
 import { getSession } from "./lib/session.js";
 import "./styles/global.css";
 
@@ -104,9 +105,9 @@ const router = createBrowserRouter([
       {
         path: "student",
         element: (
-          <ProtectedRoute>
-            <RoleHomePage role="student" />
-          </ProtectedRoute>
+          <RoleProtectedRoute role="student">
+            <StudentTopicsPage />
+          </RoleProtectedRoute>
         ),
       },
     ],

@@ -91,6 +91,15 @@ class TopicController {
     }
   }
 
+  async getStudentTopic(req, res) {
+    try {
+      const topic = await this.topicService.getStudentTopic(req.user.id);
+      res.json({ topic });
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ error: error.message });
+    }
+  }
+
   async getTeacherTopics(req, res) {
     try {
       const topics = await this.topicService.getTeacherTopics(req.user.id);
