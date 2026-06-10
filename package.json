@@ -1,4 +1,10 @@
 {
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "watch": "npm --prefix frontend run watch",
+    "watch:frontend": "npm --prefix frontend run watch"
+  },
   "dependencies": {
     "mongodb": "^7.2.0",
     "mongoose": "^9.6.3"

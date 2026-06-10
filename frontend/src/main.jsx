@@ -2,6 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Navigate, RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
+import AdminStudentsPage from "./pages/AdminStudentsPage.jsx";
+import AdminTeachersPage from "./pages/AdminTeachersPage.jsx";
+import AdminTopicsPage from "./pages/AdminTopicsPage.jsx";
 import AdminUsersPage from "./pages/AdminUsersPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RoleHomePage from "./pages/RoleHomePage.jsx";
@@ -63,6 +66,30 @@ const router = createBrowserRouter([
         element: (
           <RoleProtectedRoute role="admin">
             <AdminUsersPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/topics",
+        element: (
+          <RoleProtectedRoute role="admin">
+            <AdminTopicsPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/students",
+        element: (
+          <RoleProtectedRoute role="admin">
+            <AdminStudentsPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/teachers",
+        element: (
+          <RoleProtectedRoute role="admin">
+            <AdminTeachersPage />
           </RoleProtectedRoute>
         ),
       },

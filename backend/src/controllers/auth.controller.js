@@ -8,10 +8,7 @@ class AuthController {
   async login(req, res) {
     try {
       const result = await this.authService.login(
-        new LoginDto(
-          req.body.email,
-          req.body.password,
-        ),
+        new LoginDto(req.body.email, req.body.password),
       );
 
       res.json(result);
