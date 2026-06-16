@@ -20,6 +20,14 @@ router.get("/teacher/:teacherId", async (req, res, next) => {
   }
 });
 
+router.post("/", async (req, res, next) => {
+  try {
+    await progressController.createProgress(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.put(":progressId", async (req, res, next) => {
   try {
     await progressController.updateProgress(req, res);

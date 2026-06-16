@@ -1,3 +1,4 @@
+const CreateProgressDto = require("../dtos/progress/create-progress.dto");
 const UpdateProgressDto = require("../dtos/progress/update-progress.dto");
 
 class ProgressController {
@@ -18,6 +19,22 @@ class ProgressController {
       }
 
       res.json(progresses);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async createProgress(req, res) {
+    try {
+      const newProgress = await this.progressService.createProgress(
+        new CreateProgressDto(
+          req.body.topicId,
+          req.body.milestone,
+          req.body.teacherComment,
+        ),
+      );
+
+      res.status(201).json(newProgress);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
