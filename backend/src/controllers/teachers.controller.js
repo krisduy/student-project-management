@@ -24,13 +24,22 @@ class TeacherController {
     }
   }
 
+  async getTeacher(req, res) {
+    try {
+      const teacher = await this.teacherService.getTeacherById(req.params.id);
+      if (!teacher) {
+        return res.status(404).json({ error: "Teacher not found" });
+      }
+      res.json(teacher);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
   async createTeacher(req, res) {
     try {
       const newTeacher = await this.teacherService.createTeacher(
-        new CreateTeacherDto(
-          req.body.userId,
-          req.body.degree,
-        ),
+        new CreateTeacherDto(req.body.userId, req.body.degree),
       );
 
       res.status(201).json(newTeacher);
@@ -43,10 +52,7 @@ class TeacherController {
     try {
       const updatedTeacher = await this.teacherService.updateTeacher(
         req.params.id,
-        new UpdateTeacherDto(
-          req.body.userId,
-          req.body.degree,
-        ),
+        new UpdateTeacherDto(req.body.userId, req.body.degree),
       );
 
       if (!updatedTeacher) {
@@ -61,7 +67,9 @@ class TeacherController {
 
   async deleteTeacher(req, res) {
     try {
-      const deletedTeacher = await this.teacherService.deleteTeacher(req.params.id);
+      const deletedTeacher = await this.teacherService.deleteTeacher(
+        req.params.id,
+      );
 
       if (!deletedTeacher) {
         return res.status(404).json({ error: "Teacher not found" });

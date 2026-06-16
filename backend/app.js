@@ -8,20 +8,24 @@ const userRoutes = require("./src/routes/users.route");
 const studentRoutes = require("./src/routes/students.route");
 const teacherRoutes = require("./src/routes/teachers.route");
 const topicRoutes = require("./src/routes/topics.route");
+const progressRoutes = require("./src/routes/progress.route");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || true,
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || true,
+    credentials: true,
+  }),
+);
 app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/topics", topicRoutes);
+app.use("/api/progresses", progressRoutes);
 
 function healthCheck(req, res) {
   const mongoConnected = mongoose.connection.readyState === 1;

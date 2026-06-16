@@ -1,7 +1,11 @@
 const express = require("express");
 const TeacherController = require("../controllers/teachers.controller");
 const TeacherService = require("../services/teachers.service");
-const { authenticate, authorizeAdmin, authorizeRoles } = require("../middlewares/auth.middleware");
+const {
+  authenticate,
+  authorizeAdmin,
+  authorizeRoles,
+} = require("../middlewares/auth.middleware");
 
 const teacherService = new TeacherService();
 const teacherController = new TeacherController(teacherService);
@@ -25,6 +29,14 @@ router.use(authenticate, authorizeAdmin);
 router.get("/", async (req, res, next) => {
   try {
     await teacherController.getTeachers(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/:id", async (req, res, next) => {
+  try {
+    await teacherController.getTeacher(req, res);
   } catch (error) {
     next(error);
   }
