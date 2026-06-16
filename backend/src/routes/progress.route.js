@@ -20,4 +20,12 @@ router.get("/teacher/:teacherId", async (req, res, next) => {
   }
 });
 
+router.put(":progressId", async (req, res, next) => {
+  try {
+    await progressController.updateProgress(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

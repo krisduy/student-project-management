@@ -10,6 +10,17 @@ class ProgressService {
       .populate("topicId")
       .lean();
   }
+
+  async updateProgress(progressId, progressDto) {
+    return Progress.findByIdAndUpdate(
+      progressId,
+      {
+        milestone: progressDto.milestone,
+        teacherComment: progressDto.teacherComment,
+      },
+      { new: true },
+    ).lean();
+  }
 }
 
 module.exports = ProgressService;
