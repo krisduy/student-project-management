@@ -13,9 +13,7 @@ class ProgressController {
         await this.progressService.getProgressesByTeacher(teacherId);
 
       if (!progresses || progresses.length === 0) {
-        return res
-          .status(404)
-          .json({ error: "No progresses found for this teacher" });
+        return res.json([]);
       }
 
       res.json(progresses);
@@ -43,7 +41,7 @@ class ProgressController {
   async updateProgress(req, res) {
     try {
       const progresses = await this.progressService.updateProgress(
-        req.params,
+        req.params.progressId,
         new UpdateProgressDto(req.body.milestone, req.body.teacherComment),
       );
 
