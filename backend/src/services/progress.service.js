@@ -11,6 +11,16 @@ class ProgressService {
       .lean();
   }
 
+  async createProgress(progressDto) {
+    const progress = new Progress({
+      topicId: progressDto.topicId,
+      milestone: progressDto.milestone,
+      teacherComment: progressDto.teacherComment,
+    });
+
+    return progress.save();
+  }
+
   async updateProgress(progressId, progressDto) {
     return Progress.findByIdAndUpdate(
       progressId,
