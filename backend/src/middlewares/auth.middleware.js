@@ -19,6 +19,8 @@ function authenticate(req, res, next) {
       id: payload.sub,
       email: payload.email,
       role: payload.role,
+      teacherId: payload.teacherId || null,
+      studentId: payload.studentId || null,
     };
     next();
   } catch (error) {
@@ -45,7 +47,9 @@ function authorizeRoles(...roles) {
     }
 
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ error: "You do not have permission to access this resource" });
+      return res
+        .status(403)
+        .json({ error: "You do not have permission to access this resource" });
     }
 
     next();
