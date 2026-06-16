@@ -142,3 +142,25 @@ export function registerTopic(topicId, teacherId) {
 export function listTeacherOptions() {
   return apiFetch("/teachers/options");
 }
+
+export function getMySupervisingTopics() {
+  return apiFetch("/topics/my-supervising");
+}
+
+export function getProgressesByTeacher(teacherId) {
+  return apiFetch(`/progresses/teacher/${teacherId}`);
+}
+
+export function createProgress(payload) {
+  return apiFetch("/progresses", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateProgress(progressId, payload) {
+  return apiFetch(`/progresses/${progressId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar.jsx";
 import {
+  createProgress,
   getMyTopicRegistration,
   listAvailableTopics,
   listTeacherOptions,
@@ -112,6 +113,7 @@ export default function StudentTopicsPage() {
 
     try {
       const registeredTopic = await registerTopic(topicId, teacherId);
+      await createProgress({ topicId, milestone: null, teacherComment: null }).catch(() => {});
       setMyTopic(registeredTopic);
       setTopics((current) => current.filter((item) => getId(item) !== topicId));
       setNotice("Đăng ký đề tài thành công.");

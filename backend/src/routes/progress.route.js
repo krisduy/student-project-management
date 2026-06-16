@@ -28,7 +28,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put(":progressId", async (req, res, next) => {
+router.put("/:progressId", async (req, res, next) => {
   try {
     await progressController.updateProgress(req, res);
   } catch (error) {

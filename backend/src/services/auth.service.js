@@ -58,9 +58,18 @@ class AuthService {
       throw error;
     }
 
+    const userJson = user.toPublicJSON();
+    if (user.role === "teacher") {
+      const teacher = await Teacher.findOne({ userId: user._id });
+      userJson.teacherId = teacher ? teacher._id.toString() : null;
+    } else if (user.role === "student") {
+      const student = await Student.findOne({ userId: user._id });
+      userJson.studentId = student ? student._id.toString() : null;
+    }
+
     return {
       token: await this.signToken(user),
-      user: user.toPublicJSON(),
+      user: userJson,
     };
   }
 
