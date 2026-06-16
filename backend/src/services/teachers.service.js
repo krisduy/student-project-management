@@ -9,6 +9,10 @@ class TeacherService {
     return Teacher.find().populate("userId").lean();
   }
 
+  async getTeacherById(id) {
+    return Teacher.findById(id).populate("userId").lean();
+  }
+
   async createTeacher(teacherDto) {
     const teacher = new Teacher({
       userId: teacherDto.userId,
