@@ -9,8 +9,10 @@ import AdminUsersPage from "./pages/AdminUsersPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RoleHomePage from "./pages/RoleHomePage.jsx";
 import StudentTopicsPage from "./pages/StudentTopicsPage.jsx";
+import StudentProfilePage from "./pages/StudentProfilePage.jsx";
 import TeacherTopicsPage from "./pages/TeacherTopicsPage.jsx";
 import TeacherProgressPage from "./pages/TeacherProgressPage.jsx";
+import TeacherProfilePage from "./pages/TeacherProfilePage.jsx";
 import { getSession } from "./lib/session.js";
 import "./styles/global.css";
 
@@ -113,10 +115,26 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "teacher/profile",
+        element: (
+          <RoleProtectedRoute role="teacher">
+            <TeacherProfilePage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
         path: "student",
         element: (
           <RoleProtectedRoute role="student">
             <StudentTopicsPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "student/profile",
+        element: (
+          <RoleProtectedRoute role="student">
+            <StudentProfilePage />
           </RoleProtectedRoute>
         ),
       },

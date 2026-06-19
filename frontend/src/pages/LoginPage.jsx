@@ -63,7 +63,7 @@ export default function LoginPage() {
       <section className="auth-brand-panel" aria-label="Tổng quan hệ thống FBU">
         <div className="brand-lockup">
           <div className="brand-mark">
-            <GraduationCap size={24} strokeWidth={2.2} />
+            <GraduationCap size={28} strokeWidth={2.5} />
           </div>
           <div>
             <p className="brand-name">FBU</p>
@@ -73,25 +73,40 @@ export default function LoginPage() {
 
         <div className="brand-copy">
           <p className="eyebrow">Quản lý đồ án tốt nghiệp</p>
-          <h1>Quản lý đề tài, đăng ký và hướng dẫn trong một hệ thống.</h1>
+          <h1>Nền tảng quản lý đề tài thông minh và hiệu quả</h1>
           <p>
-            Nền tảng hỗ trợ quản trị viên, giảng viên và sinh viên xử lý quy
-            trình đồ án theo đúng vai trò.
+            Giải pháp toàn diện giúp quản trị viên, giảng viên và sinh viên
+            quản lý quy trình đồ án một cách chuyên nghiệp và dễ dàng.
           </p>
         </div>
 
         <div className="feature-stack">
           <div className="feature-row">
-            <CheckCircle2 size={17} />
-            <span>Quản trị viên cấp tài khoản và nhập danh sách đề tài</span>
+            <div className="feature-icon">
+              <CheckCircle2 size={18} />
+            </div>
+            <div>
+              <strong>Quản trị linh hoạt</strong>
+              <span>Quản lý tài khoản và đề tài tập trung</span>
+            </div>
           </div>
           <div className="feature-row">
-            <BookOpenCheck size={17} />
-            <span>Sinh viên tìm kiếm đề tài còn trống và đăng ký</span>
+            <div className="feature-icon">
+              <BookOpenCheck size={18} />
+            </div>
+            <div>
+              <strong>Đăng ký nhanh chóng</strong>
+              <span>Tìm kiếm và đăng ký đề tài dễ dàng</span>
+            </div>
           </div>
           <div className="feature-row">
-            <ShieldCheck size={17} />
-            <span>Giảng viên theo dõi danh sách đề tài đang hướng dẫn</span>
+            <div className="feature-icon">
+              <ShieldCheck size={18} />
+            </div>
+            <div>
+              <strong>Theo dõi tiến độ</strong>
+              <span>Giám sát và hướng dẫn hiệu quả</span>
+            </div>
           </div>
         </div>
 
@@ -117,13 +132,13 @@ export default function LoginPage() {
           <div className="login-heading">
             <p className="eyebrow">Đăng nhập</p>
             <h2>Chào mừng trở lại</h2>
-            <p>Nhập email và mật khẩu do quản trị viên cấp.</p>
+            <p>Nhập thông tin tài khoản do quản trị viên cấp để tiếp tục.</p>
           </div>
 
           <label className="field">
             <span>Email</span>
             <div className="input-frame">
-              <Mail size={17} />
+              <Mail size={18} />
               <input
                 type="email"
                 value={email}
@@ -138,7 +153,7 @@ export default function LoginPage() {
           <label className="field">
             <span>Mật khẩu</span>
             <div className="input-frame">
-              <Lock size={17} />
+              <Lock size={18} />
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
@@ -153,7 +168,7 @@ export default function LoginPage() {
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
               >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
               </button>
             </div>
           </label>
@@ -180,15 +195,15 @@ export default function LoginPage() {
             disabled={!canSubmit}
           >
             <span>{isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}</span>
-            <ArrowRight size={17} />
+            <ArrowRight size={18} />
           </button>
 
           <p className="login-note">
-            Hệ thống tự chuyển đến đúng trang làm việc theo vai trò tài khoản.
+            Hệ thống sẽ tự động chuyển đến trang làm việc phù hợp với vai trò của bạn.
           </p>
         </form>
 
-        <p className="auth-footer">© 2026 FBU · Hệ thống quản lý đồ án</p>
+        <p className="auth-footer">© 2026 FBU · Hệ thống quản lý đồ án tốt nghiệp</p>
       </section>
     </main>
   );
