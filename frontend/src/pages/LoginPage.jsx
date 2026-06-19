@@ -29,7 +29,10 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const canSubmit = useMemo(() => email.trim() && password && !isSubmitting, [email, password, isSubmitting]);
+  const canSubmit = useMemo(
+    () => email.trim() && password && !isSubmitting,
+    [email, password, isSubmitting],
+  );
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -41,16 +44,14 @@ export default function LoginPage() {
     try {
       const result = await login(email.trim(), password);
       saveSession(
-        {
-          token: result.token,
-          user: result.user,
-          loginTime: Date.now(),
-        },
+        { token: result.token, user: result.user, loginTime: Date.now() },
         remember,
       );
       navigate(routeForRole(result.user?.role), { replace: true });
     } catch (err) {
-      setError(err.status === 401 ? "Email hoặc mật khẩu không hợp lệ." : err.message);
+      setError(
+        err.status === 401 ? "Email hoặc mật khẩu không hợp lệ." : err.message,
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -58,10 +59,11 @@ export default function LoginPage() {
 
   return (
     <main className="auth-shell">
-      <section className="auth-brand-panel" aria-label="Tổng quan hệ thống quản lý đồ án FBU">
+      {/* ── Brand panel ── */}
+      <section className="auth-brand-panel" aria-label="Tổng quan hệ thống FBU">
         <div className="brand-lockup">
           <div className="brand-mark">
-            <GraduationCap size={26} strokeWidth={2.4} />
+            <GraduationCap size={24} strokeWidth={2.2} />
           </div>
           <div>
             <p className="brand-name">FBU</p>
@@ -73,21 +75,22 @@ export default function LoginPage() {
           <p className="eyebrow">Quản lý đồ án tốt nghiệp</p>
           <h1>Quản lý đề tài, đăng ký và hướng dẫn trong một hệ thống.</h1>
           <p>
-            Nền tảng hỗ trợ quản trị viên, giảng viên và sinh viên xử lý quy trình đồ án theo đúng vai trò.
+            Nền tảng hỗ trợ quản trị viên, giảng viên và sinh viên xử lý quy
+            trình đồ án theo đúng vai trò.
           </p>
         </div>
 
         <div className="feature-stack">
           <div className="feature-row">
-            <CheckCircle2 size={18} />
+            <CheckCircle2 size={17} />
             <span>Quản trị viên cấp tài khoản và nhập danh sách đề tài</span>
           </div>
           <div className="feature-row">
-            <BookOpenCheck size={18} />
+            <BookOpenCheck size={17} />
             <span>Sinh viên tìm kiếm đề tài còn trống và đăng ký</span>
           </div>
           <div className="feature-row">
-            <ShieldCheck size={18} />
+            <ShieldCheck size={17} />
             <span>Giảng viên theo dõi danh sách đề tài đang hướng dẫn</span>
           </div>
         </div>
@@ -108,6 +111,7 @@ export default function LoginPage() {
         </div>
       </section>
 
+      {/* ── Form panel ── */}
       <section className="auth-form-panel" aria-label="Biểu mẫu đăng nhập">
         <form className="login-card" onSubmit={handleSubmit}>
           <div className="login-heading">
@@ -119,11 +123,11 @@ export default function LoginPage() {
           <label className="field">
             <span>Email</span>
             <div className="input-frame">
-              <Mail size={18} />
+              <Mail size={17} />
               <input
                 type="email"
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="email@fbu.edu.vn"
                 autoComplete="username"
                 required
@@ -134,11 +138,11 @@ export default function LoginPage() {
           <label className="field">
             <span>Mật khẩu</span>
             <div className="input-frame">
-              <Lock size={18} />
+              <Lock size={17} />
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Nhập mật khẩu"
                 autoComplete="current-password"
                 required
@@ -146,11 +150,10 @@ export default function LoginPage() {
               <button
                 className="icon-button"
                 type="button"
-                onClick={() => setShowPassword((value) => !value)}
+                onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
-                title={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </label>
@@ -160,25 +163,32 @@ export default function LoginPage() {
               <input
                 type="checkbox"
                 checked={remember}
-                onChange={(event) => setRemember(event.target.checked)}
+                onChange={(e) => setRemember(e.target.checked)}
               />
               <span>Ghi nhớ đăng nhập</span>
             </label>
-            <span className="support-text">Liên hệ quản trị viên nếu quên mật khẩu</span>
+            <span className="support-text">
+              Liên hệ quản trị viên nếu quên mật khẩu
+            </span>
           </div>
 
           {error ? <div className="error-alert">{error}</div> : null}
 
-          <button className="primary-action" type="submit" disabled={!canSubmit}>
+          <button
+            className="primary-action"
+            type="submit"
+            disabled={!canSubmit}
+          >
             <span>{isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}</span>
-            <ArrowRight size={18} />
+            <ArrowRight size={17} />
           </button>
 
           <p className="login-note">
             Hệ thống tự chuyển đến đúng trang làm việc theo vai trò tài khoản.
           </p>
         </form>
-        <p className="auth-footer">© 2026 FBU. Hệ thống quản lý đồ án.</p>
+
+        <p className="auth-footer">© 2026 FBU · Hệ thống quản lý đồ án</p>
       </section>
     </main>
   );
