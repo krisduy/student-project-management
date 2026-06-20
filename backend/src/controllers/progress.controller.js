@@ -86,7 +86,7 @@ class ProgressController {
         percentage: 0,
       };
 
-      const Progress = require("../models/progress.model");
+      const { Progress } = require("../models/progress.model");
       const progress = new Progress(progressData);
       const saved = await progress.save();
 
