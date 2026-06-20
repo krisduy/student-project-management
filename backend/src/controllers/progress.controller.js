@@ -22,17 +22,96 @@ class ProgressController {
     }
   }
 
+  async getMyProgress(req, res) {
+    try {
+      const studentId = req.user?.studentId;
+      if (!studentId) {
+        return res.status(400).json({ error: "Không tìm thấy thông tin sinh viên" });
+      }
+
+      const progress = await this.progressService.getProgressByStudentId(studentId);
+      res.json(progress || { message: "Chưa có tiến độ" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getStudentProgressByTeacher(req, res) {
+    try {
+      const teacherId = req.user?.teacherId;
+      if (!teacherId) {
+        return res.status(400).json({ error: "Không tìm thấy thông tin giảng viên" });
+      }
+
+      const progresses = await this.progressService.getStudentProgressByTeacher(teacherId);
+      res.json(progresses);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async getProgressByTopicId(req, res) {
+    try {
+      const { topicId } = req.params;
+      const progress = await this.progressService.getProgressByTopicId(topicId);
+
+      if (!progress) {
+        return res.status(404).json({ error: "Không tìm thấy tiến độ" });
+      }
+
+      res.json(progress);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
   async createProgress(req, res) {
     try {
-      const newProgress = await this.progressService.createProgress(
-        new CreateProgressDto(
-          req.body.topicId,
-          req.body.milestone,
-          req.body.teacherComment,
-        ),
-      );
+      const topicId = req.body.topicId;
+      let studentId = req.user?.studentId;
 
-      res.status(201).json(newProgress);
+      if (!studentId && topicId) {
+        const Topic = require("../models/topic.model");
+        const topic = await Topic.findById(topicId).populate("studentId");
+        if (topic?.studentId?._id) {
+          studentId = topic.studentId._id;
+        }
+      }
+
+      const progressData = {
+        topicId,
+        studentId,
+        currentStage: req.body.currentStage || "",
+        completedStages: req.body.completedStages || [],
+        percentage: 0,
+      };
+
+      const Progress = require("../models/progress.model");
+      const progress = new Progress(progressData);
+      const saved = await progress.save();
+
+      res.status(201).json(saved);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+
+  async updateStudentStage(req, res) {
+    try {
+      const { progressId } = req.params;
+      const { stage, notes } = req.body;
+
+      if (!stage) {
+        return res.status(400).json({ error: "Vui lòng chọn giai đoạn" });
+      }
+
+      const validStages = ["register", "analysis", "development", "report", "complete"];
+      if (!validStages.includes(stage)) {
+        return res.status(400).json({ error: "Giai đoạn không hợp lệ" });
+      }
+
+      const updated = await this.progressService.updateStudentStage(progressId, stage, notes);
+      res.json(updated);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

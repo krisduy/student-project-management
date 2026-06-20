@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   UserCog,
   Users,
+  Home,
 } from "lucide-react";
 import { clearSession, getSession } from "../lib/session.js";
 
@@ -26,22 +27,6 @@ function initials(user) {
   );
 }
 
-function SidebarAvatar({ user }) {
-  return (
-    <div className="grid size-10 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-blue-600 to-emerald-600 text-xs font-black text-white">
-      {initials(user)}
-    </div>
-  );
-}
-
-function navClass(isActive) {
-  if (isActive) {
-    return "flex min-h-11 items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-3 text-left font-black text-blue-700";
-  }
-
-  return "flex min-h-11 items-center gap-3 rounded-lg border border-transparent px-3 text-left font-black text-slate-600 hover:border-slate-200 hover:bg-slate-50 hover:text-slate-950";
-}
-
 export default function AdminSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,65 +38,51 @@ export default function AdminSidebar() {
     navigate("/login", { replace: true });
   }
 
+  const navItems = [
+    { path: "/admin", icon: Home, label: "Tổng quan" },
+    { path: "/admin/users", icon: UserCog, label: "Quản lý tài khoản" },
+    { path: "/admin/students", icon: Users, label: "Quản lý sinh viên" },
+    { path: "/admin/teachers", icon: ShieldCheck, label: "Quản lý giảng viên" },
+    { path: "/admin/topics", icon: ClipboardList, label: "Quản lý đề tài" },
+  ];
+
   return (
-    <aside className="flex min-h-full flex-col gap-6 border-b border-slate-200 bg-white p-5 lg:min-h-screen lg:border-b-0 lg:border-r lg:p-6">
-      <div className="flex items-center gap-3 border-b border-slate-200 pb-5">
-        <div className="grid size-12 place-items-center rounded-lg bg-gradient-to-br from-blue-600 to-emerald-600 text-white shadow-lg shadow-blue-200">
+    <aside className="admin-sidebar">
+      <div className="admin-brand">
+        <div className="admin-brand-mark">
           <GraduationCap size={24} strokeWidth={2.4} />
         </div>
         <div>
-          <p className="m-0 text-2xl font-black">FBU</p>
-          <p className="m-0 text-xs text-slate-500">Project System</p>
+          <p className="admin-brand-name">FBU</p>
+          <p className="admin-brand-sub">Project System</p>
         </div>
       </div>
 
-      <nav className="grid gap-2 sm:grid-cols-4 lg:grid-cols-1">
-        <button
-          className={navClass(location.pathname === "/admin")}
-          type="button"
-          onClick={() => navigate("/admin")}
-        >
-          <UserCog size={18} />
-          <span>Quản lý tài khoản</span>
-        </button>
-        <button
-          className={navClass(location.pathname === "/admin/students")}
-          type="button"
-          onClick={() => navigate("/admin/students")}
-        >
-          <Users size={18} />
-          <span>Quản lý sinh viên</span>
-        </button>
-        <button
-          className={navClass(location.pathname === "/admin/teachers")}
-          type="button"
-          onClick={() => navigate("/admin/teachers")}
-        >
-          <ShieldCheck size={18} />
-          <span>Quản lý giảng viên</span>
-        </button>
-        <button
-          className={navClass(location.pathname === "/admin/topics")}
-          type="button"
-          onClick={() => navigate("/admin/topics")}
-        >
-          <ClipboardList size={18} />
-          <span>Quản lý đề tài</span>
-        </button>
+      <nav className="admin-nav">
+        {navItems.map((item) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <button
+              key={item.path}
+              className={`admin-nav-item ${isActive ? "active" : ""}`}
+              type="button"
+              onClick={() => navigate(item.path)}
+            >
+              <item.icon size={20} />
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
       </nav>
 
-      <div className="mt-auto grid grid-cols-[40px_minmax(0,1fr)_34px] items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
-        <SidebarAvatar user={currentUser} />
-        <div className="min-w-0">
-          <strong className="block truncate text-sm">
-            {fullName(currentUser)}
-          </strong>
-          <span className="block truncate text-xs text-slate-500">
-            Quản trị viên
-          </span>
+      <div className="admin-userbox">
+        <div className="admin-avatar">{initials(currentUser)}</div>
+        <div>
+          <strong>{fullName(currentUser)}</strong>
+          <span>Quản trị viên</span>
         </div>
         <button
-          className="grid size-8 place-items-center rounded-lg text-slate-500 hover:bg-slate-200 hover:text-slate-950"
+          className="action-btn"
           type="button"
           onClick={handleLogout}
           aria-label="Đăng xuất"

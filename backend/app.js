@@ -9,6 +9,7 @@ const studentRoutes = require("./src/routes/students.route");
 const teacherRoutes = require("./src/routes/teachers.route");
 const topicRoutes = require("./src/routes/topics.route");
 const progressRoutes = require("./src/routes/progress.route");
+const dashboardRoutes = require("./src/routes/dashboard.route");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ app.use("/api/students", studentRoutes);
 app.use("/api/teachers", teacherRoutes);
 app.use("/api/topics", topicRoutes);
 app.use("/api/progresses", progressRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 function healthCheck(req, res) {
   const mongoConnected = mongoose.connection.readyState === 1;

@@ -10,6 +10,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import RoleHomePage from "./pages/RoleHomePage.jsx";
 import StudentTopicsPage from "./pages/StudentTopicsPage.jsx";
 import StudentProfilePage from "./pages/StudentProfilePage.jsx";
+import StudentProgressPage from "./pages/StudentProgressPage.jsx";
 import TeacherTopicsPage from "./pages/TeacherTopicsPage.jsx";
 import TeacherProgressPage from "./pages/TeacherProgressPage.jsx";
 import TeacherProfilePage from "./pages/TeacherProfilePage.jsx";
@@ -66,8 +67,17 @@ const router = createBrowserRouter([
           </PublicRoute>
         ),
       },
+      // Admin routes
       {
         path: "admin",
+        element: (
+          <RoleProtectedRoute role="admin">
+            <RoleHomePage role="admin" />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "admin/users",
         element: (
           <RoleProtectedRoute role="admin">
             <AdminUsersPage />
@@ -98,8 +108,17 @@ const router = createBrowserRouter([
           </RoleProtectedRoute>
         ),
       },
+      // Teacher routes
       {
         path: "teacher",
+        element: (
+          <RoleProtectedRoute role="teacher">
+            <RoleHomePage role="teacher" />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "teacher/topics",
         element: (
           <RoleProtectedRoute role="teacher">
             <TeacherTopicsPage />
@@ -122,11 +141,28 @@ const router = createBrowserRouter([
           </RoleProtectedRoute>
         ),
       },
+      // Student routes
       {
         path: "student",
         element: (
           <RoleProtectedRoute role="student">
+            <RoleHomePage role="student" />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "student/topics",
+        element: (
+          <RoleProtectedRoute role="student">
             <StudentTopicsPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "student/progress",
+        element: (
+          <RoleProtectedRoute role="student">
+            <StudentProgressPage />
           </RoleProtectedRoute>
         ),
       },

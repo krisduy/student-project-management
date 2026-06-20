@@ -59,11 +59,10 @@ export default function LoginPage() {
 
   return (
     <main className="auth-shell">
-      {/* ── Brand panel ── */}
       <section className="auth-brand-panel" aria-label="Tổng quan hệ thống FBU">
         <div className="brand-lockup">
           <div className="brand-mark">
-            <GraduationCap size={28} strokeWidth={2.5} />
+            <GraduationCap size={30} strokeWidth={2.5} />
           </div>
           <div>
             <p className="brand-name">FBU</p>
@@ -83,7 +82,7 @@ export default function LoginPage() {
         <div className="feature-stack">
           <div className="feature-row">
             <div className="feature-icon">
-              <CheckCircle2 size={18} />
+              <CheckCircle2 size={20} />
             </div>
             <div>
               <strong>Quản trị linh hoạt</strong>
@@ -92,7 +91,7 @@ export default function LoginPage() {
           </div>
           <div className="feature-row">
             <div className="feature-icon">
-              <BookOpenCheck size={18} />
+              <BookOpenCheck size={20} />
             </div>
             <div>
               <strong>Đăng ký nhanh chóng</strong>
@@ -101,7 +100,7 @@ export default function LoginPage() {
           </div>
           <div className="feature-row">
             <div className="feature-icon">
-              <ShieldCheck size={18} />
+              <ShieldCheck size={20} />
             </div>
             <div>
               <strong>Theo dõi tiến độ</strong>
@@ -126,7 +125,6 @@ export default function LoginPage() {
         </div>
       </section>
 
-      {/* ── Form panel ── */}
       <section className="auth-form-panel" aria-label="Biểu mẫu đăng nhập">
         <form className="login-card" onSubmit={handleSubmit}>
           <div className="login-heading">
@@ -138,7 +136,7 @@ export default function LoginPage() {
           <label className="field">
             <span>Email</span>
             <div className="input-frame">
-              <Mail size={18} />
+              <Mail size={20} />
               <input
                 type="email"
                 value={email}
@@ -153,7 +151,7 @@ export default function LoginPage() {
           <label className="field">
             <span>Mật khẩu</span>
             <div className="input-frame">
-              <Lock size={18} />
+              <Lock size={20} />
               <input
                 type={showPassword ? "text" : "password"}
                 value={password}
@@ -168,7 +166,7 @@ export default function LoginPage() {
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
               >
-                {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </label>
@@ -195,7 +193,7 @@ export default function LoginPage() {
             disabled={!canSubmit}
           >
             <span>{isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}</span>
-            <ArrowRight size={18} />
+            <ArrowRight size={20} />
           </button>
 
           <p className="login-note">

@@ -151,9 +151,28 @@ export function getProgressesByTeacher(teacherId) {
   return apiFetch(`/progresses/teacher/${teacherId}`);
 }
 
+export function getMyProgress() {
+  return apiFetch("/progresses/me");
+}
+
+export function getStudentProgressByTeacher() {
+  return apiFetch("/progresses/teacher/students");
+}
+
+export function getProgressByTopic(topicId) {
+  return apiFetch(`/progresses/topic/${topicId}`);
+}
+
 export function createProgress(payload) {
   return apiFetch("/progresses", {
     method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateMyStage(progressId, payload) {
+  return apiFetch(`/progresses/stage/${progressId}`, {
+    method: "PUT",
     body: JSON.stringify(payload),
   });
 }
@@ -163,4 +182,8 @@ export function updateProgress(progressId, payload) {
     method: "PUT",
     body: JSON.stringify(payload),
   });
+}
+
+export function getDashboardStats() {
+  return apiFetch("/dashboard/stats");
 }

@@ -10,9 +10,33 @@ const progressService = new ProgressService();
 const progressController = new ProgressController(progressService);
 const router = express.Router();
 
-router.use(authenticate, authorizeRoles("teacher", "admin"));
+router.use(authenticate);
 
-router.get("/teacher/:teacherId", async (req, res, next) => {
+router.get("/me", async (req, res, next) => {
+  try {
+    await progressController.getMyProgress(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/teacher/students", authorizeRoles("teacher", "admin"), async (req, res, next) => {
+  try {
+    await progressController.getStudentProgressByTeacher(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/topic/:topicId", authorizeRoles("teacher", "admin"), async (req, res, next) => {
+  try {
+    await progressController.getProgressByTopicId(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/teacher/:teacherId", authorizeRoles("teacher", "admin"), async (req, res, next) => {
   try {
     await progressController.getProgressesByTeacher(req, res);
   } catch (error) {
@@ -28,7 +52,15 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.put("/:progressId", async (req, res, next) => {
+router.put("/stage/:progressId", async (req, res, next) => {
+  try {
+    await progressController.updateStudentStage(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/:progressId", authorizeRoles("teacher", "admin"), async (req, res, next) => {
   try {
     await progressController.updateProgress(req, res);
   } catch (error) {
