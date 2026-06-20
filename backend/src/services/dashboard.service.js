@@ -1,6 +1,6 @@
 const User = require("../models/user.model");
 const Topic = require("../models/topic.model");
-const Progress = require("../models/progress.model");
+const { Progress } = require("../models/progress.model");
 
 async function getAdminStats() {
   const [totalUsers, totalTopics, totalStudents, totalTeachers] = await Promise.all([
