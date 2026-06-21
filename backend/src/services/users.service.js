@@ -81,6 +81,7 @@ class UserService {
       if (userDto.role === "teacher") {
         await Teacher.create({
           userId: savedUser._id,
+          teacherCode: `GV${savedUser._id.toString().slice(-8).toUpperCase()}`,
           degree: userDto.teacher?.degree,
         });
       }

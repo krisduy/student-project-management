@@ -16,6 +16,7 @@ class TeacherService {
   async createTeacher(teacherDto) {
     const teacher = new Teacher({
       userId: teacherDto.userId,
+      teacherCode: `GV${teacherDto.userId.toString().slice(-8).toUpperCase()}`,
       degree: teacherDto.degree,
     });
 
