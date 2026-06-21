@@ -13,6 +13,7 @@ import {
   MessageSquareText,
   Save,
   X,
+  Telescope,
   Filter,
 } from "lucide-react";
 import TeacherSidebar from "../components/TeacherSidebar.jsx";
@@ -397,10 +398,18 @@ export default function TeacherProgressPage() {
     <main className="admin-shell">
       <TeacherSidebar />
       <section className="admin-content">
-        <div className="page-header">
-          <p className="eyebrow">Giảng viên</p>
-          <h1>Theo dõi tiến độ đồ án</h1>
-          <p>Quản lý và theo dõi tiến độ thực hiện đồ án của sinh viên được phân công hướng dẫn.</p>
+        <div className="rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-600 p-8 mb-8 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3"></div>
+          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/5 rounded-full"></div>
+          <div className="absolute top-4 right-4 w-32 h-32 border border-white/10 rounded-full"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2">
+              <Telescope size={20} className="text-yellow-300" />
+              <span className="text-sm font-medium text-white/80">Theo dõi tiến độ</span>
+            </div>
+            <h1 className="text-4xl font-black mb-3">Theo dõi tiến độ đồ án</h1>
+            <p className="text-lg text-white/90 max-w-xl">Quản lý và theo dõi tiến độ thực hiện đồ án của sinh viên được phân công hướng dẫn.</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

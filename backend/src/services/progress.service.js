@@ -16,14 +16,22 @@ class ProgressService {
 
   async getProgressesByStudent(studentId) {
     return Progress.find({ studentId })
+      .sort({ updatedAt: -1 })
       .populate("topicId")
       .lean();
   }
 
   async getProgressByStudentId(studentId) {
-    return Progress.findOne({ studentId })
+    const progress = await Progress.findOne({ studentId })
+      .sort({ updatedAt: -1 })
       .populate("topicId")
       .lean();
+    
+    console.log("[DEBUG getProgressByStudentId] studentId:", studentId);
+    console.log("[DEBUG getProgressByStudentId] progress:", progress);
+    console.log("[DEBUG getProgressByStudentId] progress?.percentage:", progress?.percentage);
+    
+    return progress;
   }
 
   async getProgressByTopicId(topicId) {
@@ -106,6 +114,12 @@ class ProgressService {
     const currentIndex = STAGE_ORDER.indexOf(progress.currentStage);
     const newIndex = STAGE_ORDER.indexOf(stage);
 
+    console.log("[DEBUG updateStudentStage] progressId:", progressId);
+    console.log("[DEBUG updateStudentStage] currentStage:", progress.currentStage);
+    console.log("[DEBUG updateStudentStage] new stage:", stage);
+    console.log("[DEBUG updateStudentStage] currentIndex:", currentIndex);
+    console.log("[DEBUG updateStudentStage] newIndex:", newIndex);
+
     if (!progress.completedStages.includes(stage)) {
       if (newIndex > currentIndex) {
         for (let i = currentIndex; i <= newIndex; i++) {
@@ -120,6 +134,9 @@ class ProgressService {
 
     progress.currentStage = stage;
     progress.percentage = STAGE_PERCENTAGES[stage] || 0;
+
+    console.log("[DEBUG updateStudentStage] percentage to save:", progress.percentage);
+    console.log("[DEBUG updateStudentStage] completedStages:", progress.completedStages);
 
     if (notes) {
       progress.stageDetails = progress.stageDetails || new Map();

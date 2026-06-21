@@ -30,6 +30,7 @@ export function AvatarDisplay({ user, size = "md" }) {
     md: "w-10 h-10 text-sm",
     lg: "w-20 h-20 text-2xl",
     xl: "w-32 h-32 text-4xl",
+    profileHero: "w-full h-full object-cover text-4xl font-bold",
   };
 
   if (user?.avatar) {

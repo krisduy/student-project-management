@@ -15,8 +15,7 @@ import {
   ArrowRight,
   Zap,
   Target,
-  Award,
-  FileText,
+  Award,  FileText,
   UserPlus,
   BookMarked,
   Telescope,
@@ -116,7 +115,16 @@ const navItems = {
     { path: "/student", icon: Home, label: "Tổng quan" },
     { path: "/student/topics", icon: BookOpen, label: "Đăng ký đề tài" },
     { path: "/student/progress", icon: Telescope, label: "Theo dõi tiến độ" },
+    { path: "/student/defense-scores", icon: Award, label: "Điểm bảo vệ" },
     { path: "/student/profile", icon: GraduationCap, label: "Hồ sơ cá nhân" },
+  ],
+  admin: [
+    { path: "/admin", icon: Home, label: "Tổng quan" },
+    { path: "/admin/users", icon: UserPlus, label: "Quản lý tài khoản" },
+    { path: "/admin/students", icon: Users, label: "Quản lý sinh viên" },
+    { path: "/admin/teachers", icon: Shield, label: "Quản lý giảng viên" },
+    { path: "/admin/topics", icon: ClipboardList, label: "Quản lý đề tài" },
+    { path: "/admin/defense-scores", icon: Award, label: "Điểm bảo vệ" },
   ],
 };
 
@@ -125,7 +133,7 @@ const quickActions = {
   admin: [
     { icon: UserPlus, label: "Thêm tài khoản", color: "from-violet-500 to-purple-600", path: "/admin/users" },
     { icon: BookMarked, label: "Tạo đề tài", color: "from-blue-500 to-indigo-600", path: "/admin/topics" },
-    { icon: Users, label: "Quản lý SV", color: "from-emerald-500 to-teal-600", path: "/admin/students" },
+    { icon: Award, label: "Điểm bảo vệ", color: "from-emerald-500 to-teal-600", path: "/admin/defense-scores" },
     { icon: Shield, label: "Quản lý GV", color: "from-amber-500 to-orange-600", path: "/admin/teachers" },
   ],
   teacher: [
@@ -192,21 +200,6 @@ export default function RoleHomePage({ role }) {
             <p className="admin-brand-name">FBU</p>
             <p className="admin-brand-sub">Project System</p>
           </div>
-        </div>
-
-        <div className="p-4 text-center border-b border-slate-100">
-          <div className="relative inline-block">
-            <div className={`w-14 h-14 rounded-full ${bgGradient} flex items-center justify-center text-white font-black text-lg shadow-lg mx-auto`}>
-              {initials(user)}
-            </div>
-            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-400 rounded-full border-2 border-white flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-            </div>
-          </div>
-          <p className="text-sm font-bold text-slate-900 mt-3">{fullName(user)}</p>
-          <span className={`inline-block mt-2 px-3 py-1 text-xs font-bold rounded-full ${bgGradient} text-white`}>
-            {roleLabels[role] || role}
-          </span>
         </div>
 
         <nav className="admin-nav">
@@ -306,8 +299,8 @@ export default function RoleHomePage({ role }) {
                 <>
                   <StatCard icon={BookMarked} label="Đề tài đang hướng dẫn" value={stats.supervisedTopics} color="bg-gradient-to-br from-emerald-500 to-teal-600" gradient="from-emerald-500 to-teal-600" />
                   <StatCard icon={Users} label="Sinh viên đang hướng dẫn" value={stats.totalStudents} color="bg-gradient-to-br from-blue-500 to-indigo-600" gradient="from-blue-500 to-indigo-600" />
-                  <StatCard icon={FileText} label="Tổng báo cáo tiến độ" value={stats.totalProgresses} color="bg-gradient-to-br from-violet-500 to-purple-600" gradient="from-violet-500 to-purple-600" />
-                  <StatCard icon={CheckCircle} label="Đã duyệt báo cáo" value={stats.commentedProgresses} color="bg-gradient-to-br from-amber-500 to-orange-600" gradient="from-amber-500 to-orange-600" />
+                  <StatCard icon={CheckCircle} label="Đề tài có sinh viên" value={stats.commentedProgresses} color="bg-gradient-to-br from-violet-500 to-purple-600" gradient="from-violet-500 to-purple-600" />
+                  <StatCard icon={Users} label="Tổng sinh viên" value={stats.totalStudents} color="bg-gradient-to-br from-amber-500 to-orange-600" gradient="from-amber-500 to-orange-600" />
                 </>
               )}
               
@@ -323,7 +316,7 @@ export default function RoleHomePage({ role }) {
                   />
                   <StatCard icon={FileText} label="Tổng báo cáo tiến độ" value={stats.totalProgresses} color="bg-gradient-to-br from-blue-500 to-indigo-600" gradient="from-blue-500 to-indigo-600" />
                   <StatCard icon={CheckCircle} label="Đã phản hồi" value={stats.commentedProgresses} color="bg-gradient-to-br from-violet-500 to-purple-600" gradient="from-violet-500 to-purple-600" />
-                  <StatCard icon={TrendingUp} label="Tiến độ" value={stats.totalProgresses > 0 ? `${Math.min(100, stats.totalProgresses * 10)}%` : "0%"} color="bg-gradient-to-br from-emerald-500 to-teal-600" gradient="from-emerald-500 to-teal-600" />
+                  <StatCard icon={TrendingUp} label="Tiến độ" value={`${stats.progressPercentage || 0}%`} color="bg-gradient-to-br from-emerald-500 to-teal-600" gradient="from-emerald-500 to-teal-600" />
                 </>
               )}
             </div>
@@ -472,20 +465,20 @@ export default function RoleHomePage({ role }) {
                       </div>
                       <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
                         <div className="flex items-center gap-3">
-                          <FileText size={28} className="text-blue-600" />
+                          <Users size={28} className="text-blue-600" />
                           <div>
-                            <p className="font-semibold text-slate-900">Báo cáo tiến độ</p>
-                            <p className="text-sm text-slate-500">Tổng số báo cáo đã nộp</p>
+                            <p className="font-semibold text-slate-900">Sinh viên đang hướng dẫn</p>
+                            <p className="text-sm text-slate-500">Được phân công cho bạn</p>
                           </div>
                         </div>
-                        <p className="text-4xl font-black text-blue-600">{stats.totalProgresses}</p>
+                        <p className="text-4xl font-black text-blue-600">{stats.totalStudents}</p>
                       </div>
                       <div className="flex items-center justify-between p-4 bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl border border-violet-100">
                         <div className="flex items-center gap-3">
                           <CheckCircle size={28} className="text-violet-600" />
                           <div>
-                            <p className="font-semibold text-slate-900">Đã duyệt báo cáo</p>
-                            <p className="text-sm text-slate-500">Báo cáo đã có phản hồi</p>
+                            <p className="font-semibold text-slate-900">Đề tài có sinh viên</p>
+                            <p className="text-sm text-slate-500">Đã được đăng ký</p>
                           </div>
                         </div>
                         <p className="text-4xl font-black text-violet-600">{stats.commentedProgresses}</p>

@@ -2,12 +2,14 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Navigate, RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App.jsx";
+import AdminDefenseScoresPage from "./pages/AdminDefenseScoresPage.jsx";
 import AdminStudentsPage from "./pages/AdminStudentsPage.jsx";
 import AdminTeachersPage from "./pages/AdminTeachersPage.jsx";
 import AdminTopicsPage from "./pages/AdminTopicsPage.jsx";
 import AdminUsersPage from "./pages/AdminUsersPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RoleHomePage from "./pages/RoleHomePage.jsx";
+import StudentDefenseScorePage from "./pages/StudentDefenseScorePage.jsx";
 import StudentTopicsPage from "./pages/StudentTopicsPage.jsx";
 import StudentProfilePage from "./pages/StudentProfilePage.jsx";
 import StudentProgressPage from "./pages/StudentProgressPage.jsx";
@@ -93,6 +95,14 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "admin/defense-scores",
+        element: (
+          <RoleProtectedRoute role="admin">
+            <AdminDefenseScoresPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
         path: "admin/students",
         element: (
           <RoleProtectedRoute role="admin">
@@ -163,6 +173,14 @@ const router = createBrowserRouter([
         element: (
           <RoleProtectedRoute role="student">
             <StudentProgressPage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "student/defense-scores",
+        element: (
+          <RoleProtectedRoute role="student">
+            <StudentDefenseScorePage />
           </RoleProtectedRoute>
         ),
       },

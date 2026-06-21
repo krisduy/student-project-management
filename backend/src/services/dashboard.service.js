@@ -53,10 +53,18 @@ async function getStudentStats(studentId) {
       topic: null,
       progresses: [],
       totalProgresses: 0,
+      progressPercentage: 0,
     };
   }
 
-  const progresses = await Progress.find({ topicId: topic._id }).lean();
+  const progresses = await Progress.find({ topicId: topic._id }).sort({ updatedAt: -1 }).lean();
+  const latestProgress = progresses.length > 0 ? progresses[0] : null;
+
+  console.log("[DEBUG] getStudentStats - studentId:", studentId);
+  console.log("[DEBUG] topic:", topic?._id);
+  console.log("[DEBUG] progresses count:", progresses.length);
+  console.log("[DEBUG] latestProgress:", latestProgress);
+  console.log("[DEBUG] latestProgress.percentage:", latestProgress?.percentage);
 
   return {
     hasTopic: true,
@@ -64,6 +72,7 @@ async function getStudentStats(studentId) {
     progresses,
     totalProgresses: progresses.length,
     commentedProgresses: progresses.filter((p) => p.teacherComment).length,
+    progressPercentage: latestProgress?.percentage || 0,
   };
 }
 

@@ -209,3 +209,48 @@ export function updateProgress(progressId, payload) {
 export function getDashboardStats() {
   return apiFetch("/dashboard/stats");
 }
+
+// Defense Scores
+export function getEligibleDefenseTopics(params = {}) {
+  const searchParams = new URLSearchParams();
+  if (params.search) searchParams.set("search", params.search);
+  if (params.status) searchParams.set("status", params.status);
+  if (params.page) searchParams.set("page", params.page);
+  if (params.limit) searchParams.set("limit", params.limit);
+  const suffix = searchParams.toString() ? `?${searchParams.toString()}` : "";
+  return apiFetch(`/defense-scores/eligible-topics${suffix}`);
+}
+
+export function getDefenseScoreByTopic(topicId) {
+  return apiFetch(`/defense-scores/topic/${topicId}`);
+}
+
+export function saveDefenseScore(payload) {
+  return apiFetch("/defense-scores", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateDefenseScore(topicId, payload) {
+  return apiFetch(`/defense-scores/topic/${topicId}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function lockDefenseScore(topicId) {
+  return apiFetch(`/defense-scores/topic/${topicId}/lock`, {
+    method: "PATCH",
+  });
+}
+
+export function unlockDefenseScore(topicId) {
+  return apiFetch(`/defense-scores/topic/${topicId}/unlock`, {
+    method: "PATCH",
+  });
+}
+
+export function getMyDefenseScore() {
+  return apiFetch("/defense-scores/my-score");
+}

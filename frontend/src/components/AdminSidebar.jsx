@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  Award,
   ClipboardList,
   GraduationCap,
   LogOut,
@@ -45,6 +46,7 @@ export default function AdminSidebar() {
     { path: "/admin/students", icon: Users, label: "Quản lý sinh viên" },
     { path: "/admin/teachers", icon: ShieldCheck, label: "Quản lý giảng viên" },
     { path: "/admin/topics", icon: ClipboardList, label: "Quản lý đề tài" },
+    { path: "/admin/defense-scores", icon: Award, label: "Điểm bảo vệ" },
   ];
 
   return (

@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { BookOpenCheck, GraduationCap, LogOut, Home, UserRound, TrendingUp } from "lucide-react";
+import { Award, BookOpenCheck, GraduationCap, LogOut, Home, UserRound, TrendingUp } from "lucide-react";
 import { clearSession, getSession } from "../lib/session.js";
 import { AvatarDisplay } from "./AvatarDisplay.jsx";
 
@@ -35,6 +35,7 @@ export default function StudentSidebar() {
     { path: "/student", icon: Home, label: "Tổng quan" },
     { path: "/student/topics", icon: BookOpenCheck, label: "Đăng ký đề tài" },
     { path: "/student/progress", icon: TrendingUp, label: "Theo dõi tiến độ" },
+    { path: "/student/defense-scores", icon: Award, label: "Điểm bảo vệ" },
     { path: "/student/profile", icon: UserRound, label: "Hồ sơ cá nhân" },
   ];
 

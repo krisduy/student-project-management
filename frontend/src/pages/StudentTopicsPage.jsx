@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import {
+  BookOpen,
   BookOpenCheck,
   CheckCircle2,
   Search,
   Send,
   UserRoundCheck,
   Sparkles,
-  BookMarked,
+  X,
 } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar.jsx";
 import {
@@ -93,17 +94,42 @@ export default function StudentTopicsPage() {
       <section className="admin-content">
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
           <div className="min-w-0">
-            <div className="page-header">
-              <p className="eyebrow">Sinh viên</p>
-              <h1>Đăng ký đề tài</h1>
-              <p>Chọn một đề tài còn trống và giảng viên hướng dẫn để gửi đăng ký.</p>
+            <div className="rounded-3xl bg-gradient-to-br from-blue-600 to-indigo-700 p-8 mb-8 text-white relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3"></div>
+              <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/5 rounded-full"></div>
+              <div className="absolute top-4 right-4 w-32 h-32 border border-white/10 rounded-full"></div>
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-2">
+                  <BookOpen size={20} className="text-yellow-300" />
+                  <span className="text-sm font-medium text-white/80">Đăng ký đề tài</span>
+                </div>
+                <h1 className="text-4xl font-black mb-3">Đăng ký đề tài</h1>
+                <p className="text-lg text-white/90 max-w-xl">Chọn một đề tài còn trống và giảng viên hướng dẫn để gửi đăng ký.</p>
+              </div>
             </div>
 
             <div className="search-bar">
               <div className="search-input">
-                <Search size={20} />
-                <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Tìm mã hoặc tên đề tài" disabled={Boolean(myTopic)} />
+                <Search size={18} />
+                <input
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Tìm mã hoặc tên đề tài..."
+                  disabled={Boolean(myTopic)}
+                />
+                {query && (
+                  <button className="search-input-clear" onClick={() => setQuery("")} title="Xóa tìm kiếm" type="button">
+                    <X size={12} />
+                  </button>
+                )}
               </div>
+              {query && (
+                <div className="search-count">
+                  <strong>{filteredTopics.length}</strong>
+                  <span> kết quả</span>
+                </div>
+              )}
             </div>
 
             {notice ? <div className="notice notice-success">{notice}</div> : null}
@@ -146,29 +172,38 @@ export default function StudentTopicsPage() {
                 </div>
 
                 {isLoading ? (
-                  <div className="p-8 text-center"><span className="font-semibold text-slate-500">Đang tải danh sách đề tài...</span></div>
+                  <div className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto mb-4 animate-pulse">
+                      <BookOpenCheck size={28} className="text-indigo-300" />
+                    </div>
+                    <p className="font-semibold text-slate-400">Đang tải danh sách đề tài...</p>
+                  </div>
                 ) : filteredTopics.length ? (
                   <div className="divide-y divide-slate-100">
                     {filteredTopics.map((topic) => {
                       const topicId = getId(topic);
                       return (
                         <div className="topic-card" key={topicId}>
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <span className="role-badge badge-available">Còn trống</span>
-                            <span className="text-xs font-semibold text-slate-500">{topic.topicCode}</span>
+                          <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <div className="flex items-center gap-2">
+                              <span className="role-badge badge-available">Còn trống</span>
+                              <span className="text-xs font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded-md tracking-wide">{topic.topicCode}</span>
+                            </div>
                           </div>
                           <h3 className="topic-name">{topic.topicName}</h3>
                           <div className="flex flex-wrap items-end gap-3 mt-4">
                             <div className="flex-1 min-w-48">
-                              <label className="text-xs font-bold text-slate-500 mb-1 block">Giảng viên hướng dẫn</label>
+                              <label className="text-xs font-bold text-slate-500 mb-1.5 block">Giảng viên hướng dẫn</label>
                               <select className={inputClass("bg-white")} value={teacherSelections[topicId] || ""} onChange={(e) => updateTeacherSelection(topicId, e.target.value)}>
                                 <option value="">Chọn giảng viên</option>
                                 {teachers.map((teacher) => <option value={getId(teacher)} key={getId(teacher)}>{teacherText(teacher)}</option>)}
                               </select>
                             </div>
                             <button className="create-btn" type="button" onClick={() => handleRegister(topic)} disabled={isRegistering === topicId}>
-                              <Send size={16} />
-                              <span>{isRegistering === topicId ? "Đang gửi..." : "Đăng ký"}</span>
+                              {isRegistering === topicId ? (
+                                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              ) : <Send size={16} />}
+                              <span>{isRegistering === topicId ? "Đang gửi..." : "Đăng ký ngay"}</span>
                             </button>
                           </div>
                         </div>
@@ -176,7 +211,13 @@ export default function StudentTopicsPage() {
                     })}
                   </div>
                 ) : (
-                  <div className="p-8 text-center"><span className="font-semibold text-slate-500">Không có đề tài còn trống phù hợp.</span></div>
+                  <div className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                      <Search size={28} className="text-slate-300" />
+                    </div>
+                    <p className="font-bold text-slate-500">Không tìm thấy đề tài</p>
+                    <p className="text-sm text-slate-400 mt-1">Thử thay đổi từ khóa tìm kiếm</p>
+                  </div>
                 )}
               </section>
             )}

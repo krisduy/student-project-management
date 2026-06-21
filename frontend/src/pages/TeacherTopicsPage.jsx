@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookCheck, Search, User, Users } from "lucide-react";
+import { BookCheck, BookMarked, Search, User, Users } from "lucide-react";
 import TeacherSidebar from "../components/TeacherSidebar.jsx";
 import { getMySupervisingTopics } from "../lib/api.js";
 
@@ -42,10 +42,18 @@ export default function TeacherTopicsPage() {
     <main className="admin-shell">
       <TeacherSidebar />
       <section className="admin-content">
-        <div className="page-header">
-          <p className="eyebrow">Giảng viên</p>
-          <h1>Đề tài đang hướng dẫn</h1>
-          <p>Danh sách đề tài bạn đang hướng dẫn và thông tin sinh viên thực hiện.</p>
+        <div className="rounded-3xl bg-gradient-to-br from-emerald-600 to-teal-600 p-8 mb-8 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3"></div>
+          <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-white/5 rounded-full"></div>
+          <div className="absolute top-4 right-4 w-32 h-32 border border-white/10 rounded-full"></div>
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2">
+              <BookMarked size={20} className="text-yellow-300" />
+              <span className="text-sm font-medium text-white/80">Đề tài hướng dẫn</span>
+            </div>
+            <h1 className="text-4xl font-black mb-3">Đề tài đang hướng dẫn</h1>
+            <p className="text-lg text-white/90 max-w-xl">Danh sách đề tài bạn đang hướng dẫn và thông tin sinh viên thực hiện.</p>
+          </div>
         </div>
 
         <div className="search-bar">
