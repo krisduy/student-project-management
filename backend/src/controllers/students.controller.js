@@ -65,6 +65,15 @@ class StudentController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  async getStudentOptions(req, res) {
+    try {
+      const options = await this.studentService.getStudentOptions();
+      res.json(options);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = StudentController;

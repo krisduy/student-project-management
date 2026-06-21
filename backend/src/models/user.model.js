@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "teacher", "student"],
       required: true,
     },
+    avatar: { type: String, default: null },
   },
   { timestamps: true },
 );
@@ -22,6 +23,7 @@ userSchema.methods.toPublicJSON = function toPublicJSON() {
     lastName: this.lastName,
     email: this.email,
     role: this.role,
+    avatar: this.avatar,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   };

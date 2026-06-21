@@ -61,10 +61,25 @@ class AuthService {
     const userJson = user.toPublicJSON();
     if (user.role === "teacher") {
       const teacher = await Teacher.findOne({ userId: user._id });
-      userJson.teacherId = teacher ? teacher._id.toString() : null;
+      if (teacher) {
+        userJson.teacherId = {
+          id: teacher._id.toString(),
+          teacherCode: teacher.teacherCode,
+          degree: teacher.degree,
+          department: teacher.department,
+          title: teacher.title,
+        };
+      }
     } else if (user.role === "student") {
       const student = await Student.findOne({ userId: user._id });
-      userJson.studentId = student ? student._id.toString() : null;
+      if (student) {
+        userJson.studentId = {
+          id: student._id.toString(),
+          studentCode: student.studentCode,
+          class: student.class,
+          major: student.major,
+        };
+      }
     }
 
     return {
@@ -74,7 +89,116 @@ class AuthService {
   }
 
   async getCurrentUser(userId) {
-    return User.findById(userId).lean();
+    const user = await User.findById(userId).lean();
+    if (!user) return null;
+
+    const result = {
+      id: user._id.toString(),
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role,
+      avatar: user.avatar,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    if (user.role === "teacher") {
+      const teacher = await Teacher.findOne({ userId: user._id });
+      if (teacher) {
+        result.teacherId = {
+          id: teacher._id.toString(),
+          teacherCode: teacher.teacherCode,
+          degree: teacher.degree,
+          department: teacher.department,
+          title: teacher.title,
+        };
+      }
+    } else if (user.role === "student") {
+      const student = await Student.findOne({ userId: user._id });
+      if (student) {
+        result.studentId = {
+          id: student._id.toString(),
+          studentCode: student.studentCode,
+          class: student.class,
+          major: student.major,
+        };
+      }
+    }
+
+    return result;
+  }
+
+  async updateCurrentUserAvatar(userId, avatar) {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { avatar },
+      { new: true },
+    ).lean();
+
+    if (!user) return null;
+
+    return this.getCurrentUser(user._id);
+  }
+
+  async updateCurrentUserProfile(userId, profileDto) {
+    const user = await User.findById(userId);
+    if (!user) return null;
+
+    const userUpdates = {};
+    if (typeof profileDto.firstName === "string" && profileDto.firstName.trim()) {
+      userUpdates.firstName = profileDto.firstName.trim();
+    }
+    if (typeof profileDto.lastName === "string" && profileDto.lastName.trim()) {
+      userUpdates.lastName = profileDto.lastName.trim();
+    }
+    if (typeof profileDto.email === "string" && profileDto.email.trim()) {
+      const email = profileDto.email.toLowerCase().trim();
+      const existingUser = await User.findOne({ email, _id: { $ne: user._id } });
+      if (existingUser) {
+        const error = new Error("Email already exists");
+        error.statusCode = 409;
+        throw error;
+      }
+      userUpdates.email = email;
+    }
+
+    if (Object.keys(userUpdates).length) {
+      await User.findByIdAndUpdate(user._id, userUpdates);
+    }
+
+    if (user.role === "student") {
+      const studentUpdates = {};
+      if (typeof profileDto.studentCode === "string") studentUpdates.studentCode = profileDto.studentCode.trim();
+      if (typeof profileDto.class === "string") studentUpdates.class = profileDto.class.trim();
+      if (typeof profileDto.major === "string") studentUpdates.major = profileDto.major.trim();
+
+      if (Object.keys(studentUpdates).length) {
+        await Student.findOneAndUpdate(
+          { userId: user._id },
+          { $set: studentUpdates, $setOnInsert: { userId: user._id } },
+          { new: true, upsert: true, runValidators: true },
+        );
+      }
+    }
+
+    if (user.role === "teacher") {
+      const teacherUpdates = {};
+      if (typeof profileDto.teacherCode === "string") teacherUpdates.teacherCode = profileDto.teacherCode.trim();
+      if (typeof profileDto.degree === "string") teacherUpdates.degree = profileDto.degree.trim();
+      if (typeof profileDto.department === "string") teacherUpdates.department = profileDto.department.trim();
+      if (typeof profileDto.title === "string") teacherUpdates.title = profileDto.title.trim();
+
+      if (Object.keys(teacherUpdates).length) {
+        await Teacher.findOneAndUpdate(
+          { userId: user._id },
+          { $set: teacherUpdates, $setOnInsert: { userId: user._id } },
+          { new: true, upsert: true, runValidators: true },
+        );
+      }
+    }
+
+    return this.getCurrentUser(user._id);
   }
 }
 

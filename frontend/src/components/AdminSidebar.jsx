@@ -9,6 +9,7 @@ import {
   Home,
 } from "lucide-react";
 import { clearSession, getSession } from "../lib/session.js";
+import { AvatarDisplay } from "./AvatarDisplay.jsx";
 
 function fullName(user) {
   return (
@@ -76,7 +77,7 @@ export default function AdminSidebar() {
       </nav>
 
       <div className="admin-userbox">
-        <div className="admin-avatar">{initials(currentUser)}</div>
+        <AvatarDisplay user={currentUser} size="md" />
         <div>
           <strong>{fullName(currentUser)}</strong>
           <span>Quản trị viên</span>

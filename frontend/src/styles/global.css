@@ -1199,6 +1199,32 @@ button {
   margin-bottom: 20px;
 }
 
+.profile-avatar-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.avatar-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #6366f1;
+  color: white;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 3px solid white;
+}
+
+.avatar-upload-btn:hover {
+  background: #4f46e5;
+  transform: scale(1.1);
+}
+
 .profile-header h2 {
   font-size: 28px;
   font-weight: 800;

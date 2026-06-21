@@ -1,0 +1,6 @@
+{"sessionId":"068686","location":"createUser backend","message":"creating student","data":{"userId":"6a37b23dbd7f2551499f3bfb","class":"CNTT21A","major":"Công nghệ thông tin"},"timestamp":1782035005624}
+{"sessionId":"068686","location":"createUser frontend","message":"student payload","data":{"student":{"class":"CNTT21A","major":"Công nghệ thông tin"}},"timestamp":1782035005475}
+{"sessionId":"068686","location":"createUser frontend","message":"student payload","data":{"student":{"class":"CNTT21A","major":"Công nghệ thông tin"}},"timestamp":1782035155457}
+{"sessionId":"068686","location":"createUser backend","message":"creating student","data":{"userId":"6a37b2d3bd7f2551499f3bfd","class":"CNTT21A","major":"Công nghệ thông tin"},"timestamp":1782035155459}
+{"sessionId":"068686","location":"createUser frontend","message":"student payload","data":{"student":{"class":"CNTT21A","major":"Công nghệ thông tin"}},"timestamp":1782035156386}
+{"sessionId":"068686","location":"createUser backend","message":"creating student","data":{"userId":"6a37b2d4bd7f2551499f3bff","class":"CNTT21A","major":"Công nghệ thông tin"},"timestamp":1782035156387}

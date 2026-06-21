@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { BookOpenCheck, GraduationCap, LogOut, Home, UserRound, TrendingUp } from "lucide-react";
 import { clearSession, getSession } from "../lib/session.js";
+import { AvatarDisplay } from "./AvatarDisplay.jsx";
 
 function fullName(user) {
   return (
@@ -67,7 +68,7 @@ export default function StudentSidebar() {
       </nav>
 
       <div className="admin-userbox">
-        <div className="admin-avatar">{initials(currentUser)}</div>
+        <AvatarDisplay user={currentUser} size="md" />
         <div>
           <strong>{fullName(currentUser)}</strong>
           <span>Sinh viên</span>

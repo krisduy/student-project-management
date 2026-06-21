@@ -8,6 +8,11 @@ const studentSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    studentCode: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     class: {
       type: String,
       required: true,

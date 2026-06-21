@@ -2,39 +2,155 @@ import { useEffect, useState } from "react";
 import {
   BookOpen,
   Calendar,
+  Camera,
+  CheckCircle2,
+  Clock,
+  Edit3,
+  FileText,
   GraduationCap,
   Mail,
-  User,
-  Clock,
-  CheckCircle2,
-  FileText,
+  Save,
   TrendingUp,
+  User,
+  X,
 } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar.jsx";
-import { getMyTopicRegistration } from "../lib/api.js";
-import { getSession } from "../lib/session.js";
+import { getMyTopicRegistration, getStudentOptions, updateAvatar, updateMyProfile } from "../lib/api.js";
+import { getSession, setSession } from "../lib/session.js";
+import { AvatarDisplay } from "../components/AvatarDisplay.jsx";
 
-function fullName(user) { return [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "Người dùng"; }
-function initials(user) { return [user?.firstName?.[0], user?.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "SV"; }
-function formatDate(value) { if (!value) return "Chưa có"; return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(value)); }
+const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
+
+const DEFAULT_CLASSES = ["CNTT-01", "CNTT-02", "CNTT-03", "CNTT-04", "KTPM-01", "KTPM-02", "KHMT-01", "HTTT-01"];
+const DEFAULT_MAJORS = ["Công nghệ thông tin", "Kỹ thuật phần mềm", "Khoa học máy tính", "Hệ thống thông tin", "An toàn thông tin"];
+
+function fullName(user) {
+  return [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "Người dùng";
+}
+
+function formatDate(value) {
+  if (!value) return "Chưa có";
+  return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(value));
+}
+
+function getProfileForm(user) {
+  return {
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    studentCode: user?.studentId?.studentCode || "",
+    class: user?.studentId?.class || "",
+    major: user?.studentId?.major || "",
+  };
+}
 
 export default function StudentProfilePage() {
-  const session = getSession();
-  const user = session?.user;
+  const [sessionState, setSessionState] = useState(() => getSession());
+  const user = sessionState?.user;
   const student = user?.studentId;
   const [myTopic, setMyTopic] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar || "");
+  const [isUploading, setIsUploading] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState(() => getProfileForm(user));
+  const [profileError, setProfileError] = useState("");
+  const [classOptions, setClassOptions] = useState(DEFAULT_CLASSES);
+  const [majorOptions, setMajorOptions] = useState(DEFAULT_MAJORS);
 
   async function loadData() {
     setIsLoading(true);
     try {
-      const result = await getMyTopicRegistration();
-      setMyTopic(result.topic);
-    } catch (err) { console.error(err); }
-    finally { setIsLoading(false); }
+      const [topicResult, optionsResult] = await Promise.allSettled([
+        getMyTopicRegistration(),
+        getStudentOptions(),
+      ]);
+      if (topicResult.status === "fulfilled") setMyTopic(topicResult.value.topic);
+      if (optionsResult.status === "fulfilled" && optionsResult.value) {
+        if (optionsResult.value.classes?.length) setClassOptions(optionsResult.value.classes);
+        if (optionsResult.value.majors?.length) setMajorOptions(optionsResult.value.majors);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => { loadData(); }, []);
+
+  function persistUser(nextUser) {
+    const nextSession = { ...sessionState, user: nextUser };
+    setSession(nextSession);
+    setSessionState(nextSession);
+    setAvatarUrl(nextUser?.avatar || "");
+  }
+
+  async function handleAvatarChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Vui lòng chọn file ảnh.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_AVATAR_SIZE) {
+      alert("Avatar tối đa 2MB. Vui lòng chọn ảnh nhỏ hơn.");
+      e.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result;
+      setIsUploading(true);
+      try {
+        const updated = await updateAvatar(base64);
+        persistUser({ ...user, ...updated, avatar: updated?.avatar || base64 });
+      } catch (err) {
+        alert("Lỗi cập nhật avatar: " + err.message);
+      } finally {
+        setIsUploading(false);
+        e.target.value = "";
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updateProfileField(field, value) {
+    setProfileForm((current) => ({ ...current, [field]: value }));
+  }
+
+  function startEditProfile() {
+    setProfileForm(getProfileForm(user));
+    setProfileError("");
+    setIsEditingProfile(true);
+  }
+
+  function cancelEditProfile() {
+    setProfileForm(getProfileForm(user));
+    setProfileError("");
+    setIsEditingProfile(false);
+  }
+
+  async function handleProfileSubmit(event) {
+    event.preventDefault();
+    setIsSavingProfile(true);
+    setProfileError("");
+
+    try {
+      const updatedUser = await updateMyProfile(profileForm);
+      persistUser(updatedUser);
+      setIsEditingProfile(false);
+    } catch (err) {
+      setProfileError(err.status === 409 ? "Email này đã tồn tại." : err.message || "Không thể cập nhật hồ sơ.");
+    } finally {
+      setIsSavingProfile(false);
+    }
+  }
 
   return (
     <main className="admin-shell">
@@ -48,49 +164,105 @@ export default function StudentProfilePage() {
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
           <div className="grid gap-5">
-            {/* Profile Card */}
             <section className="main-panel overflow-hidden">
               <div className="profile-header">
-                <div className="profile-avatar">
-                  <GraduationCap size={40} strokeWidth={2} />
+                <div className="profile-avatar-wrapper">
+                  <AvatarDisplay user={{ ...user, avatar: avatarUrl }} size="xl" />
+                  <label className="avatar-upload-btn">
+                    <Camera size={18} />
+                    <input type="file" accept="image/*" onChange={handleAvatarChange} disabled={isUploading} hidden />
+                  </label>
                 </div>
                 <h2>{fullName(user)}</h2>
                 <p>Sinh viên · Thành viên từ {formatDate(user?.createdAt)}</p>
+                {!isEditingProfile ? (
+                  <button className="btn btn-secondary mt-4" type="button" onClick={startEditProfile}>
+                    <Edit3 size={16} />
+                    <span>Sửa thông tin</span>
+                  </button>
+                ) : null}
               </div>
 
-              <div className="profile-info-grid">
-                <div className="info-card">
-                  <div className="info-icon blue"><Mail size={20} /></div>
-                  <div>
-                    <span>Email</span>
-                    <strong>{user?.email || "Chưa có"}</strong>
+              {isEditingProfile ? (
+                <form className="p-5" onSubmit={handleProfileSubmit}>
+                  <div className="form-grid form-grid-2">
+                    <label className="form-field">
+                      <span>Họ</span>
+                      <input className="form-input" value={profileForm.firstName} onChange={(e) => updateProfileField("firstName", e.target.value)} required />
+                    </label>
+                    <label className="form-field">
+                      <span>Tên</span>
+                      <input className="form-input" value={profileForm.lastName} onChange={(e) => updateProfileField("lastName", e.target.value)} required />
+                    </label>
+                    <label className="form-field">
+                      <span>Email</span>
+                      <input className="form-input" type="email" value={profileForm.email} onChange={(e) => updateProfileField("email", e.target.value)} required />
+                    </label>
+                    <label className="form-field">
+                      <span>Mã sinh viên</span>
+                      <input className="form-input" value={profileForm.studentCode} onChange={(e) => updateProfileField("studentCode", e.target.value)} required />
+                    </label>
+                    <label className="form-field">
+                      <span>Lớp</span>
+                      <select className="form-input" value={profileForm.class} onChange={(e) => updateProfileField("class", e.target.value)} required>
+                        <option value="">-- Chọn lớp --</option>
+                        {classOptions.map((c) => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </label>
+                    <label className="form-field">
+                      <span>Chuyên ngành</span>
+                      <select className="form-input" value={profileForm.major} onChange={(e) => updateProfileField("major", e.target.value)} required>
+                        <option value="">-- Chọn chuyên ngành --</option>
+                        {majorOptions.map((m) => <option key={m} value={m}>{m}</option>)}
+                      </select>
+                    </label>
+                  </div>
+                  {profileError ? <div className="notice notice-error mt-4">{profileError}</div> : null}
+                  <div className="modal-actions mt-5">
+                    <button className="btn btn-secondary" type="button" onClick={cancelEditProfile} disabled={isSavingProfile}>
+                      <X size={16} />
+                      <span>Hủy</span>
+                    </button>
+                    <button className="btn btn-primary" type="submit" disabled={isSavingProfile}>
+                      <Save size={16} />
+                      <span>{isSavingProfile ? "Đang lưu..." : "Lưu thay đổi"}</span>
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="profile-info-grid">
+                  <div className="info-card">
+                    <div className="info-icon blue"><Mail size={20} /></div>
+                    <div>
+                      <span>Email</span>
+                      <strong>{user?.email || "Chưa có"}</strong>
+                    </div>
+                  </div>
+                  <div className="info-card">
+                    <div className="info-icon green"><User size={20} /></div>
+                    <div>
+                      <span>Mã sinh viên</span>
+                      <strong>{student?.studentCode || "Chưa có"}</strong>
+                    </div>
+                  </div>
+                  <div className="info-card">
+                    <div className="info-icon purple"><BookOpen size={20} /></div>
+                    <div>
+                      <span>Lớp</span>
+                      <strong>{student?.class || "Chưa có"}</strong>
+                    </div>
+                  </div>
+                  <div className="info-card">
+                    <div className="info-icon amber"><GraduationCap size={20} /></div>
+                    <div>
+                      <span>Chuyên ngành</span>
+                      <strong>{student?.major || "Chưa có"}</strong>
+                    </div>
                   </div>
                 </div>
-                <div className="info-card">
-                  <div className="info-icon green"><User size={20} /></div>
-                  <div>
-                    <span>Mã sinh viên</span>
-                    <strong>{student?.studentCode || "Chưa có"}</strong>
-                  </div>
-                </div>
-                <div className="info-card">
-                  <div className="info-icon purple"><BookOpen size={20} /></div>
-                  <div>
-                    <span>Lớp</span>
-                    <strong>{student?.class || "Chưa có"}</strong>
-                  </div>
-                </div>
-                <div className="info-card">
-                  <div className="info-icon amber"><GraduationCap size={20} /></div>
-                  <div>
-                    <span>Chuyên ngành</span>
-                    <strong>{student?.major || "Chưa có"}</strong>
-                  </div>
-                </div>
-              </div>
+              )}
             </section>
 
-            {/* Topic Card */}
             <section className="main-panel">
               <div className="p-5 border-b border-slate-100">
                 <h2 className="text-lg font-bold flex items-center gap-2">
@@ -108,7 +280,6 @@ export default function StudentProfilePage() {
                     <span className="text-sm font-semibold text-slate-500">{myTopic.topicCode}</span>
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 m-0">{myTopic.topicName}</h3>
-                  
                   <div className="grid gap-4 sm:grid-cols-2 mt-6">
                     <div className="p-4 rounded-xl border border-slate-100 bg-slate-50">
                       <div className="flex items-center gap-2 text-slate-500 mb-2"><User size={16} /><span className="text-xs font-bold uppercase">Giảng viên hướng dẫn</span></div>

@@ -8,9 +8,22 @@ const teacherSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    teacherCode: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     degree: {
       type: String,
       required: true,
+      trim: true,
+    },
+    department: {
+      type: String,
+      trim: true,
+    },
+    title: {
+      type: String,
       trim: true,
     },
   },

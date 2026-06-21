@@ -7,6 +7,14 @@ const studentService = new StudentService();
 const studentController = new StudentController(studentService);
 const router = express.Router();
 
+router.get("/options", async (req, res, next) => {
+  try {
+    await studentController.getStudentOptions(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.use(authenticate, authorizeAdmin);
 
 router.get("/", async (req, res, next) => {

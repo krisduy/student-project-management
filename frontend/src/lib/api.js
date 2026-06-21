@@ -75,6 +75,24 @@ export function deleteUser(id) {
   });
 }
 
+export function updateAvatar(avatar) {
+  return apiFetch("/auth/me/avatar", {
+    method: "PATCH",
+    body: JSON.stringify({ avatar }),
+  });
+}
+
+export function updateMyProfile(payload) {
+  return apiFetch("/auth/me/profile", {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function getStudentOptions() {
+  return apiFetch("/auth/student-options");
+}
+
 export function listTopics() {
   return apiFetch("/topics");
 }
@@ -101,6 +119,10 @@ export function deleteTopic(id) {
 
 export function listStudents() {
   return apiFetch("/students");
+}
+
+export function listStudentOptions() {
+  return apiFetch("/students/options");
 }
 
 export function updateStudent(id, payload) {

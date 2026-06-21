@@ -23,4 +23,28 @@ router.get("/me", authenticate, async (req, res, next) => {
   }
 });
 
+router.patch("/me/avatar", authenticate, async (req, res, next) => {
+  try {
+    await authController.updateAvatar(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.patch("/me/profile", authenticate, async (req, res, next) => {
+  try {
+    await authController.updateProfile(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/student-options", async (req, res, next) => {
+  try {
+    await authController.getStudentOptions(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

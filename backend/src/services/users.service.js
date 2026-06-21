@@ -12,6 +12,7 @@ function toPublicUser(user) {
     lastName: user.lastName,
     email: user.email,
     role: user.role,
+    avatar: user.avatar,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
   };
@@ -71,6 +72,7 @@ class UserService {
       if (userDto.role === "student") {
         await Student.create({
           userId: savedUser._id,
+          studentCode: `SV${savedUser._id.toString().slice(-8).toUpperCase()}`,
           class: userDto.student?.class,
           major: userDto.student?.major,
         });
@@ -112,6 +114,15 @@ class UserService {
     ]);
     const deletedUser = await User.findByIdAndDelete(id).lean();
     return toPublicUser(deletedUser);
+  }
+
+  async updateAvatar(id, avatar) {
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { avatar },
+      { new: true },
+    );
+    return updatedUser ? updatedUser.toPublicJSON() : null;
   }
 }
 

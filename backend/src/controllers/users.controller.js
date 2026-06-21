@@ -70,6 +70,21 @@ class UserController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  async updateAvatar(req, res) {
+    try {
+      const { avatar } = req.body;
+      const updatedUser = await this.userService.updateAvatar(req.user.id, avatar);
+
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      res.json(updatedUser);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = UserController;

@@ -20,7 +20,19 @@ app.use(
     credentials: true,
   }),
 );
-app.use(express.json());
+app.use(express.json({ limit: "5mb" }));
+app.use((req, res, next) => {
+  const start = Date.now();
+  const bodyForLog = req.body?.avatar
+    ? { ...req.body, avatar: `[base64:${req.body.avatar.length} chars]` }
+    : req.body;
+  console.log(`[REQUEST] ${req.method} ${req.url} - Body:`, JSON.stringify(bodyForLog));
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`[RESPONSE] ${req.method} ${req.url} - Status: ${res.statusCode} (${duration}ms)`);
+  });
+  next();
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/students", studentRoutes);
@@ -47,6 +59,10 @@ app.get("/api/health", healthCheck);
 
 app.get("/api", (req, res) => {
   res.json({ ok: true, message: "Backend API is running" });
+});
+
+app.get("/api/test", (req, res) => {
+  res.json({ test: "ok" });
 });
 
 async function startServer() {

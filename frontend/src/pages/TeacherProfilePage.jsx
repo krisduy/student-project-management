@@ -1,38 +1,144 @@
 import { useEffect, useState } from "react";
 import {
   BookOpen,
+  Briefcase,
   Calendar,
+  Camera,
+  Clock,
+  Edit3,
+  FileText,
   GraduationCap,
   Mail,
-  User,
-  Clock,
-  FileText,
+  Save,
   TrendingUp,
-  Briefcase,
+  User,
+  X,
 } from "lucide-react";
 import TeacherSidebar from "../components/TeacherSidebar.jsx";
-import { getMySupervisingTopics } from "../lib/api.js";
-import { getSession } from "../lib/session.js";
+import { getMySupervisingTopics, updateAvatar, updateMyProfile } from "../lib/api.js";
+import { getSession, setSession } from "../lib/session.js";
+import { AvatarDisplay } from "../components/AvatarDisplay.jsx";
 
-function fullName(user) { return [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "Người dùng"; }
-function initials(user) { return [user?.firstName?.[0], user?.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "GV"; }
-function formatDate(value) { if (!value) return "Chưa có"; return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(value)); }
+const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
+
+function fullName(user) {
+  return [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "Người dùng";
+}
+
+function formatDate(value) {
+  if (!value) return "Chưa có";
+  return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(value));
+}
+
+function getProfileForm(user) {
+  return {
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    teacherCode: user?.teacherId?.teacherCode || "",
+    degree: user?.teacherId?.degree || "",
+    department: user?.teacherId?.department || "",
+    title: user?.teacherId?.title || "",
+  };
+}
 
 export default function TeacherProfilePage() {
-  const session = getSession();
-  const user = session?.user;
+  const [sessionState, setSessionState] = useState(() => getSession());
+  const user = sessionState?.user;
   const teacher = user?.teacherId;
   const [topics, setTopics] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar || "");
+  const [isUploading, setIsUploading] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState(() => getProfileForm(user));
+  const [profileError, setProfileError] = useState("");
 
   async function loadData() {
     setIsLoading(true);
-    try { setTopics(await getMySupervisingTopics()); }
-    catch (err) { console.error(err); }
-    finally { setIsLoading(false); }
+    try {
+      setTopics(await getMySupervisingTopics());
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => { loadData(); }, []);
+
+  function persistUser(nextUser) {
+    const nextSession = { ...sessionState, user: nextUser };
+    setSession(nextSession);
+    setSessionState(nextSession);
+    setAvatarUrl(nextUser?.avatar || "");
+  }
+
+  async function handleAvatarChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Vui lòng chọn file ảnh.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_AVATAR_SIZE) {
+      alert("Avatar tối đa 2MB. Vui lòng chọn ảnh nhỏ hơn.");
+      e.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64 = reader.result;
+      setIsUploading(true);
+      try {
+        const updated = await updateAvatar(base64);
+        persistUser({ ...user, ...updated, avatar: updated?.avatar || base64 });
+      } catch (err) {
+        alert("Lỗi cập nhật avatar: " + err.message);
+      } finally {
+        setIsUploading(false);
+        e.target.value = "";
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function updateProfileField(field, value) {
+    setProfileForm((current) => ({ ...current, [field]: value }));
+  }
+
+  function startEditProfile() {
+    setProfileForm(getProfileForm(user));
+    setProfileError("");
+    setIsEditingProfile(true);
+  }
+
+  function cancelEditProfile() {
+    setProfileForm(getProfileForm(user));
+    setProfileError("");
+    setIsEditingProfile(false);
+  }
+
+  async function handleProfileSubmit(event) {
+    event.preventDefault();
+    setIsSavingProfile(true);
+    setProfileError("");
+
+    try {
+      const updatedUser = await updateMyProfile(profileForm);
+      persistUser(updatedUser);
+      setIsEditingProfile(false);
+    } catch (err) {
+      setProfileError(err.status === 409 ? "Email này đã tồn tại." : err.message || "Không thể cập nhật hồ sơ.");
+    } finally {
+      setIsSavingProfile(false);
+    }
+  }
 
   return (
     <main className="admin-shell">
@@ -46,49 +152,103 @@ export default function TeacherProfilePage() {
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
           <div className="grid gap-5">
-            {/* Profile Card */}
             <section className="main-panel overflow-hidden">
-              <div className="profile-header" style={{ background: 'linear-gradient(135deg, #059669, #0d9488)' }}>
-                <div className="profile-avatar">
-                  <Briefcase size={40} strokeWidth={2} />
+              <div className="profile-header" style={{ background: "linear-gradient(135deg, #059669, #0d9488)" }}>
+                <div className="profile-avatar-wrapper">
+                  <AvatarDisplay user={{ ...user, avatar: avatarUrl }} size="xl" />
+                  <label className="avatar-upload-btn">
+                    <Camera size={18} />
+                    <input type="file" accept="image/*" onChange={handleAvatarChange} disabled={isUploading} hidden />
+                  </label>
                 </div>
                 <h2>{fullName(user)}</h2>
                 <p>Giảng viên hướng dẫn · Thành viên từ {formatDate(user?.createdAt)}</p>
+                {!isEditingProfile ? (
+                  <button className="btn btn-secondary mt-4" type="button" onClick={startEditProfile}>
+                    <Edit3 size={16} />
+                    <span>Sửa thông tin</span>
+                  </button>
+                ) : null}
               </div>
 
-              <div className="profile-info-grid">
-                <div className="info-card">
-                  <div className="info-icon blue"><Mail size={20} /></div>
-                  <div>
-                    <span>Email</span>
-                    <strong>{user?.email || "Chưa có"}</strong>
+              {isEditingProfile ? (
+                <form className="p-5" onSubmit={handleProfileSubmit}>
+                  <div className="form-grid form-grid-2">
+                    <label className="form-field">
+                      <span>Họ</span>
+                      <input className="form-input" value={profileForm.firstName} onChange={(e) => updateProfileField("firstName", e.target.value)} required />
+                    </label>
+                    <label className="form-field">
+                      <span>Tên</span>
+                      <input className="form-input" value={profileForm.lastName} onChange={(e) => updateProfileField("lastName", e.target.value)} required />
+                    </label>
+                    <label className="form-field">
+                      <span>Email</span>
+                      <input className="form-input" type="email" value={profileForm.email} onChange={(e) => updateProfileField("email", e.target.value)} required />
+                    </label>
+                    <label className="form-field">
+                      <span>Mã giảng viên</span>
+                      <input className="form-input" value={profileForm.teacherCode} onChange={(e) => updateProfileField("teacherCode", e.target.value)} required />
+                    </label>
+                    <label className="form-field">
+                      <span>Học vị</span>
+                      <input className="form-input" value={profileForm.degree} onChange={(e) => updateProfileField("degree", e.target.value)} required />
+                    </label>
+                    <label className="form-field">
+                      <span>Khoa</span>
+                      <input className="form-input" value={profileForm.department} onChange={(e) => updateProfileField("department", e.target.value)} />
+                    </label>
+                    <label className="form-field">
+                      <span>Chức vụ</span>
+                      <input className="form-input" value={profileForm.title} onChange={(e) => updateProfileField("title", e.target.value)} />
+                    </label>
+                  </div>
+                  {profileError ? <div className="notice notice-error mt-4">{profileError}</div> : null}
+                  <div className="modal-actions mt-5">
+                    <button className="btn btn-secondary" type="button" onClick={cancelEditProfile} disabled={isSavingProfile}>
+                      <X size={16} />
+                      <span>Hủy</span>
+                    </button>
+                    <button className="btn btn-primary" type="submit" disabled={isSavingProfile}>
+                      <Save size={16} />
+                      <span>{isSavingProfile ? "Đang lưu..." : "Lưu thay đổi"}</span>
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div className="profile-info-grid">
+                  <div className="info-card">
+                    <div className="info-icon blue"><Mail size={20} /></div>
+                    <div>
+                      <span>Email</span>
+                      <strong>{user?.email || "Chưa có"}</strong>
+                    </div>
+                  </div>
+                  <div className="info-card">
+                    <div className="info-icon green"><User size={20} /></div>
+                    <div>
+                      <span>Mã giảng viên</span>
+                      <strong>{teacher?.teacherCode || "Chưa có"}</strong>
+                    </div>
+                  </div>
+                  <div className="info-card">
+                    <div className="info-icon purple"><GraduationCap size={20} /></div>
+                    <div>
+                      <span>Khoa</span>
+                      <strong>{teacher?.department || "Chưa có"}</strong>
+                    </div>
+                  </div>
+                  <div className="info-card">
+                    <div className="info-icon amber"><Briefcase size={20} /></div>
+                    <div>
+                      <span>Chức vụ</span>
+                      <strong>{teacher?.title || "Giảng viên"}</strong>
+                    </div>
                   </div>
                 </div>
-                <div className="info-card">
-                  <div className="info-icon green"><User size={20} /></div>
-                  <div>
-                    <span>Mã giảng viên</span>
-                    <strong>{teacher?.teacherCode || "Chưa có"}</strong>
-                  </div>
-                </div>
-                <div className="info-card">
-                  <div className="info-icon purple"><GraduationCap size={20} /></div>
-                  <div>
-                    <span>Khoa</span>
-                    <strong>{teacher?.department || "Chưa có"}</strong>
-                  </div>
-                </div>
-                <div className="info-card">
-                  <div className="info-icon amber"><Briefcase size={20} /></div>
-                  <div>
-                    <span>Chức vụ</span>
-                    <strong>{teacher?.title || "Giảng viên"}</strong>
-                  </div>
-                </div>
-              </div>
+              )}
             </section>
 
-            {/* Topics Card */}
             <section className="main-panel">
               <div className="p-5 border-b border-slate-100">
                 <h2 className="text-lg font-bold flex items-center gap-2">
@@ -111,7 +271,7 @@ export default function TeacherProfilePage() {
                           <span className="role-badge badge-assigned">{topic.topicCode}</span>
                         </div>
                         <h3 className="text-sm font-bold text-slate-900 mt-1">{topic.topicName}</h3>
-                        {topic.studentId && <p className="text-xs text-slate-500 mt-1">SV: {fullName(topic.studentId.userId)}</p>}
+                        {topic.studentId ? <p className="text-xs text-slate-500 mt-1">SV: {fullName(topic.studentId.userId)}</p> : null}
                       </div>
                     </div>
                   ))}

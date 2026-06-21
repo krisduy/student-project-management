@@ -32,6 +32,12 @@ class StudentService {
   async deleteStudent(id) {
     return Student.findByIdAndDelete(id).populate("userId").lean();
   }
+
+  async getStudentOptions() {
+    const classes = await Student.distinct("class");
+    const majors = await Student.distinct("major");
+    return { classes: classes.filter(Boolean).sort(), majors: majors.filter(Boolean).sort() };
+  }
 }
 
 module.exports = StudentService;
