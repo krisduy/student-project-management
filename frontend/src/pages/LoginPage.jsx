@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowRight,
+  BookOpen,
   BookOpenCheck,
   CheckCircle2,
   Eye,
@@ -10,6 +11,8 @@ import {
   Lock,
   Mail,
   ShieldCheck,
+  Users,
+  GraduationCap as AcademicCap,
 } from "lucide-react";
 import { login } from "../lib/api.js";
 import { saveSession } from "../lib/session.js";
@@ -220,12 +223,13 @@ export default function LoginPage() {
           </button>
 
           <p className="login-note">
-            Hệ thống sẽ tự động chuyển đến trang làm việc phù hợp với vai trò của bạn.
-          </p>
-        </form>
+  Hệ thống sẽ tự động chuyển đến trang làm việc phù hợp với vai trò của bạn.
+</p>
 
-        <p className="auth-footer">© 2026 FBU · Hệ thống quản lý đồ án tốt nghiệp</p>
-      </section>
-    </main>
-  );
-}
+</div>
+
+</form>
+
+<p className="auth-footer">
+  © 2026 FBU · Hệ thống quản lý đồ án tốt nghiệp
+</p>
