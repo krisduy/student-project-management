@@ -100,10 +100,11 @@ function QuickAction({ icon: Icon, label, color, onClick }) {
 const navItems = {
   admin: [
     { path: "/admin", icon: Home, label: "Tổng quan" },
-    { path: "/admin/users", icon: Users, label: "Quản lý tài khoản" },
-    { path: "/admin/students", icon: UserPlus, label: "Quản lý sinh viên" },
+    { path: "/admin/users", icon: UserPlus, label: "Quản lý tài khoản" },
+    { path: "/admin/students", icon: Users, label: "Quản lý sinh viên" },
     { path: "/admin/teachers", icon: Shield, label: "Quản lý giảng viên" },
     { path: "/admin/topics", icon: ClipboardList, label: "Quản lý đề tài" },
+    { path: "/admin/defense-scores", icon: Award, label: "Điểm bảo vệ" },
   ],
   teacher: [
     { path: "/teacher", icon: Home, label: "Tổng quan" },
@@ -117,14 +118,6 @@ const navItems = {
     { path: "/student/progress", icon: Telescope, label: "Theo dõi tiến độ" },
     { path: "/student/defense-scores", icon: Award, label: "Điểm bảo vệ" },
     { path: "/student/profile", icon: GraduationCap, label: "Hồ sơ cá nhân" },
-  ],
-  admin: [
-    { path: "/admin", icon: Home, label: "Tổng quan" },
-    { path: "/admin/users", icon: UserPlus, label: "Quản lý tài khoản" },
-    { path: "/admin/students", icon: Users, label: "Quản lý sinh viên" },
-    { path: "/admin/teachers", icon: Shield, label: "Quản lý giảng viên" },
-    { path: "/admin/topics", icon: ClipboardList, label: "Quản lý đề tài" },
-    { path: "/admin/defense-scores", icon: Award, label: "Điểm bảo vệ" },
   ],
 };
 

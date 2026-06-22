@@ -127,11 +127,34 @@ export default function LoginPage() {
 
       <section className="auth-form-panel" aria-label="Biểu mẫu đăng nhập">
         <form className="login-card" onSubmit={handleSubmit}>
-          <div className="login-heading">
-            <p className="eyebrow">Đăng nhập</p>
-            <h2>Chào mừng trở lại</h2>
-            <p>Nhập thông tin tài khoản do quản trị viên cấp để tiếp tục.</p>
-          </div>
+          {/* Top accent bar */}
+          <div className="login-card-accent" />
+
+          <div className="login-card-inner">
+            <div className="login-heading">
+              <div className="login-eyebrow-wrap">
+                <span className="eyebrow">Đăng nhập hệ thống</span>
+                <div className="eyebrow-dot" />
+              </div>
+              <h2>Chào mừng trở lại</h2>
+              <p>Nhập thông tin tài khoản để truy cập workspace của bạn.</p>
+            </div>
+
+            {/* Role pills */}
+            <div className="login-role-pills">
+              <div className="role-pill-item">
+                <Users size={13} />
+                <span>Quản trị viên</span>
+              </div>
+              <div className="role-pill-item">
+                <AcademicCap size={13} />
+                <span>Giảng viên</span>
+              </div>
+              <div className="role-pill-item">
+                <BookOpen size={13} />
+                <span>Sinh viên</span>
+              </div>
+            </div>
 
           <label className="field">
             <span>Email</span>
