@@ -2,16 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { BookCheck, BookMarked, Search, User, Users } from "lucide-react";
 import TeacherSidebar from "../components/TeacherSidebar.jsx";
 import { getMySupervisingTopics } from "../lib/api.js";
+import { AvatarDisplay } from "../components/AvatarDisplay.jsx";
 
 function fullName(user) { return [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "N/A"; }
 function formatDate(value) { if (!value) return "--"; return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(value)); }
 
-function Avatar({ user }) {
-  return (
-    <div className="grid size-10 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 text-blue-700">
-      <User size={16} />
-    </div>
-  );
+function TopicAvatar({ user }) {
+  return <AvatarDisplay user={user} size="sm" />;
 }
 
 export default function TeacherTopicsPage() {
@@ -91,7 +88,7 @@ export default function TeacherTopicsPage() {
                       <div>
                         <span className="text-xs font-bold uppercase text-slate-500">Sinh viên</span>
                         <div className="flex items-center gap-2 mt-1">
-                          <Avatar user={student?.userId} />
+                          <TopicAvatar user={student?.userId} />
                           <div>
                             <strong className="block text-sm font-semibold text-slate-900">{student ? fullName(student.userId) : "—"}</strong>
                             {student?.class && <span className="text-xs text-slate-500">{student.class}{student.major ? ` · ${student.major}` : ""}</span>}

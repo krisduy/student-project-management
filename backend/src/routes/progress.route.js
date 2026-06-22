@@ -60,6 +60,32 @@ router.put("/stage/:progressId", async (req, res, next) => {
   }
 });
 
+// Teacher approval endpoints
+router.put("/:progressId/approve", authorizeRoles("teacher"), async (req, res, next) => {
+  try {
+    await progressController.approveStage(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put("/:progressId/reject", authorizeRoles("teacher"), async (req, res, next) => {
+  try {
+    await progressController.rejectStage(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Student resubmission endpoint
+router.put("/:progressId/resubmit", async (req, res, next) => {
+  try {
+    await progressController.resubmitStage(req, res);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.put("/:progressId", authorizeRoles("teacher", "admin"), async (req, res, next) => {
   try {
     await progressController.updateProgress(req, res);

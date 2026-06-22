@@ -1,4 +1,4 @@
-const { Progress, STAGE_PERCENTAGES } = require("../models/progress.model");
+const { Progress, STAGE_PERCENTAGES, PROGRESS_STAGES } = require("../models/progress.model");
 const Topic = require("../models/topic.model");
 
 class ProgressService {
@@ -71,6 +71,8 @@ class ProgressService {
         completedStages: p.completedStages,
         stageDetails: p.stageDetails,
         teacherComment: p.teacherComment,
+        status: p.status,
+        eligibleForDefense: p.eligibleForDefense,
         updatedAt: p.updatedAt,
         student: {
           _id: student?._id,
@@ -95,7 +97,7 @@ class ProgressService {
       studentId: progressDto.studentId,
       currentStage: progressDto.currentStage || "",
       completedStages: progressDto.completedStages || [],
-      percentage: STAGE_PERCENTAGES[progressDto.currentStage] || 0,
+      percentage: 0,
     };
 
     if (progressDto.teacherComment) {
@@ -120,6 +122,11 @@ class ProgressService {
     console.log("[DEBUG updateStudentStage] currentIndex:", currentIndex);
     console.log("[DEBUG updateStudentStage] newIndex:", newIndex);
 
+    // Check if previous stage is approved (for stages > 1)
+    if (newIndex > 0 && !progress.completedStages.includes(STAGE_ORDER[newIndex - 1])) {
+      throw new Error(`Vui lòng hoàn thành giai đoạn "${PROGRESS_STAGES[newIndex - 1].label}" trước`);
+    }
+
     if (!progress.completedStages.includes(stage)) {
       if (newIndex > currentIndex) {
         for (let i = currentIndex; i <= newIndex; i++) {
@@ -134,6 +141,7 @@ class ProgressService {
 
     progress.currentStage = stage;
     progress.percentage = STAGE_PERCENTAGES[stage] || 0;
+    progress.status = "pending_teacher_approval";
 
     console.log("[DEBUG updateStudentStage] percentage to save:", progress.percentage);
     console.log("[DEBUG updateStudentStage] completedStages:", progress.completedStages);
@@ -145,6 +153,88 @@ class ProgressService {
         notes,
       });
     }
+
+    // Add to review history
+    progress.reviewHistory = progress.reviewHistory || [];
+    progress.reviewHistory.push({
+      action: "submitted",
+      stage: stage,
+      reviewedAt: new Date()
+    });
+
+    return progress.save();
+  }
+
+  async approveStage(progressId, teacherId, comment = "") {
+    const progress = await Progress.findById(progressId);
+    if (!progress) throw new Error("Không tìm thấy tiến độ");
+
+    if (progress.status === "approved") {
+      throw new Error("Giai đoạn này đã được phê duyệt");
+    }
+
+    progress.status = "approved";
+    
+    progress.reviewHistory = progress.reviewHistory || [];
+    progress.reviewHistory.push({
+      action: "approved",
+      stage: progress.currentStage,
+      teacherComment: comment,
+      reviewedAt: new Date(),
+      reviewerId: teacherId
+    });
+
+    return progress.save();
+  }
+
+  async rejectStage(progressId, teacherId, comment = "") {
+    const progress = await Progress.findById(progressId);
+    if (!progress) throw new Error("Không tìm thấy tiến độ");
+
+    if (progress.status !== "pending_teacher_approval") {
+      throw new Error("Chỉ có thể từ chối khi đang chờ xác nhận");
+    }
+
+    progress.status = "needs_revision";
+    progress.teacherComment = comment;
+    progress.updatedByTeacher = true;
+
+    progress.reviewHistory = progress.reviewHistory || [];
+    progress.reviewHistory.push({
+      action: "rejected",
+      stage: progress.currentStage,
+      teacherComment: comment,
+      reviewedAt: new Date(),
+      reviewerId: teacherId
+    });
+
+    return progress.save();
+  }
+
+  async resubmitStage(progressId, notes = "") {
+    const progress = await Progress.findById(progressId);
+    if (!progress) throw new Error("Không tìm thấy tiến độ");
+
+    if (progress.status !== "needs_revision") {
+      throw new Error("Chỉ có thể gửi lại khi đang cần chỉnh sửa");
+    }
+
+    progress.status = "pending_teacher_approval";
+
+    if (notes) {
+      progress.stageDetails = progress.stageDetails || new Map();
+      progress.stageDetails.set(progress.currentStage, {
+        completedAt: new Date(),
+        notes,
+      });
+    }
+
+    progress.reviewHistory = progress.reviewHistory || [];
+    progress.reviewHistory.push({
+      action: "resubmitted",
+      stage: progress.currentStage,
+      reviewedAt: new Date()
+    });
 
     return progress.save();
   }

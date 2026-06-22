@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+  Bell,
   BookOpen,
+  BookOpenCheck,
   GraduationCap,
   LogOut,
   Shield,
@@ -21,6 +23,7 @@ import {
   Telescope,
   Home,
   Loader2,
+  UserRound,
 } from "lucide-react";
 import { clearSession, getSession } from "../lib/session.js";
 import { getDashboardStats, getMyTopicRegistration } from "../lib/api.js";
@@ -108,16 +111,18 @@ const navItems = {
   ],
   teacher: [
     { path: "/teacher", icon: Home, label: "Tổng quan" },
-    { path: "/teacher/topics", icon: BookMarked, label: "Đề tài hướng dẫn" },
-    { path: "/teacher/progress", icon: Telescope, label: "Theo dõi tiến độ" },
-    { path: "/teacher/profile", icon: GraduationCap, label: "Hồ sơ cá nhân" },
+    { path: "/teacher/topics", icon: BookMarked, label: "Đề tài đang hướng dẫn" },
+    { path: "/teacher/progress", icon: TrendingUp, label: "Theo dõi tiến độ" },
+    { path: "/teacher/notifications", icon: Bell, label: "Thông báo" },
+    { path: "/teacher/profile", icon: UserRound, label: "Hồ sơ cá nhân" },
   ],
   student: [
     { path: "/student", icon: Home, label: "Tổng quan" },
-    { path: "/student/topics", icon: BookOpen, label: "Đăng ký đề tài" },
-    { path: "/student/progress", icon: Telescope, label: "Theo dõi tiến độ" },
+    { path: "/student/topics", icon: BookOpenCheck, label: "Đăng ký đề tài" },
+    { path: "/student/progress", icon: TrendingUp, label: "Theo dõi tiến độ" },
+    { path: "/student/notifications", icon: Bell, label: "Thông báo" },
     { path: "/student/defense-scores", icon: Award, label: "Điểm bảo vệ" },
-    { path: "/student/profile", icon: GraduationCap, label: "Hồ sơ cá nhân" },
+    { path: "/student/profile", icon: UserRound, label: "Hồ sơ cá nhân" },
   ],
 };
 
@@ -131,13 +136,15 @@ const quickActions = {
   ],
   teacher: [
     { icon: BookMarked, label: "Xem đề tài", color: "from-emerald-500 to-teal-600", path: "/teacher/topics" },
-    { icon: CheckCircle, label: "Duyệt tiến độ", color: "from-blue-500 to-indigo-600", path: "/teacher/progress" },
-    { icon: FileText, label: "Hồ sơ cá nhân", color: "from-violet-500 to-purple-600", path: "/teacher/profile" },
+    { icon: Bell, label: "Thông báo", color: "from-amber-500 to-orange-600", path: "/teacher/notifications" },
+    { icon: TrendingUp, label: "Duyệt tiến độ", color: "from-blue-500 to-indigo-600", path: "/teacher/progress" },
+    { icon: UserRound, label: "Hồ sơ cá nhân", color: "from-violet-500 to-purple-600", path: "/teacher/profile" },
   ],
   student: [
-    { icon: BookOpen, label: "Đăng ký đề tài", color: "from-blue-500 to-indigo-600", path: "/student/topics" },
-    { icon: Telescope, label: "Theo dõi tiến độ", color: "from-emerald-500 to-teal-600", path: "/student/progress" },
-    { icon: FileText, label: "Hồ sơ cá nhân", color: "from-violet-500 to-purple-600", path: "/student/profile" },
+    { icon: BookOpenCheck, label: "Đăng ký đề tài", color: "from-blue-500 to-indigo-600", path: "/student/topics" },
+    { icon: Bell, label: "Thông báo", color: "from-amber-500 to-orange-600", path: "/student/notifications" },
+    { icon: TrendingUp, label: "Theo dõi tiến độ", color: "from-emerald-500 to-teal-600", path: "/student/progress" },
+    { icon: UserRound, label: "Hồ sơ cá nhân", color: "from-violet-500 to-purple-600", path: "/student/profile" },
   ],
 };
 
@@ -185,15 +192,15 @@ export default function RoleHomePage({ role }) {
     <main className="admin-shell">
       {/* Sidebar */}
       <aside className="admin-sidebar">
-        <div className="admin-brand">
-          <div className="admin-brand-mark">
-            <GraduationCap size={24} strokeWidth={2.4} />
-          </div>
-          <div>
-            <p className="admin-brand-name">FBU</p>
-            <p className="admin-brand-sub">Project System</p>
-          </div>
+      <div className="admin-brand">
+        <div className="admin-brand-mark">
+          <GraduationCap size={24} strokeWidth={2.4} />
         </div>
+        <div>
+          <p className="admin-brand-name">FBU</p>
+          <p className="admin-brand-sub">Project System</p>
+        </div>
+      </div>
 
         <nav className="admin-nav">
           {nav.map((item) => {

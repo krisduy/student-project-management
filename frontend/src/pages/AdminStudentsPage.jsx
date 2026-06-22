@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Edit3, Filter, Plus, Search, Trash2, Users, BookOpen, GraduationCap, X } from "lucide-react";
 import AdminSidebar from "../components/AdminSidebar.jsx";
 import { createUser, deleteUser, listStudents, updateStudent, updateUser } from "../lib/api.js";
+import { AvatarDisplay } from "../components/AvatarDisplay.jsx";
 
 const classes = ["CNTT21A", "CNTT21B", "HTTT21A", "HTTT21B", "KTPM21A", "KTPM21B"];
 const majors = ["Công nghệ thông tin", "Hệ thống thông tin", "Kỹ thuật phần mềm", "Trí tuệ nhân tạo", "An toàn thông tin"];
@@ -10,14 +11,13 @@ const emptyForm = { firstName: "", lastName: "", email: "", password: "", class:
 
 function getId(record) { return record?._id || record?.id || ""; }
 function fullName(user) { return [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "Sinh viên"; }
-function initials(user) { return [user?.firstName?.[0], user?.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "SV"; }
 function formatDate(value) { if (!value) return "--"; return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(value)); }
 
 function Field({ label, children }) { return <label className="form-field"><span>{label}</span>{children}</label>; }
 function inputClass(extra = "") { return `form-input ${extra}`; }
 
-function Avatar({ user }) {
-  return <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-sm font-bold text-white shadow-md">{initials(user)}</div>;
+function StudentAvatar({ user }) {
+  return <AvatarDisplay user={user} size="sm" />;
 }
 
 export default function AdminStudentsPage() {
@@ -146,7 +146,7 @@ export default function AdminStudentsPage() {
                 {isLoading ? <tr><td colSpan="5" className="empty-state"><span>Đang tải danh sách sinh viên...</span></td></tr>
                 : filteredStudents.length ? filteredStudents.map((student) => (
                   <tr key={getId(student)}>
-                    <td><div className="user-cell"><Avatar user={student.userId} /><div><strong>{fullName(student.userId)}</strong><span>{student.userId?.email}</span></div></div></td>
+                    <td><div className="user-cell"><StudentAvatar user={student.userId} /><div><strong>{fullName(student.userId)}</strong><span>{student.userId?.email}</span></div></div></td>
                     <td className="text-sm font-semibold text-slate-700">{student.class}</td>
                     <td className="text-sm text-slate-600">{student.major}</td>
                     <td className="text-sm text-slate-600">{formatDate(student.createdAt)}</td>

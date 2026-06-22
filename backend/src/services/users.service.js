@@ -90,7 +90,15 @@ class UserService {
       throw error;
     }
 
-    return savedUser.toPublicJSON();
+    const createdUser = await User.findById(savedUser._id).lean();
+    const student = await Student.findOne({ userId: savedUser._id }).lean();
+    const teacher = await Teacher.findOne({ userId: savedUser._id }).lean();
+    
+    const result = toPublicUser(createdUser);
+    if (student) result.profile = normalizeProfile(student);
+    if (teacher) result.profile = normalizeProfile(teacher);
+    
+    return result;
   }
 
   async updateUser(id, userDto) {

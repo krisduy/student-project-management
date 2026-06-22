@@ -12,7 +12,8 @@ import {
 } from "lucide-react";
 import AdminSidebar from "../components/AdminSidebar.jsx";
 import { createUser, deleteUser, listUsers, updateUser } from "../lib/api.js";
-import { getSession } from "../lib/session.js";
+import { getSession, setSession } from "../lib/session.js";
+import { AvatarDisplay } from "../components/AvatarDisplay.jsx";
 
 const emptyForm = {
   firstName: "",
@@ -58,12 +59,8 @@ function profileText(user) {
   return "--";
 }
 
-function Avatar({ user }) {
-  return (
-    <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white shadow-md">
-      {initials(user)}
-    </div>
-  );
+function AdminAvatar({ user }) {
+  return <AvatarDisplay user={user} size="sm" />;
 }
 
 function Field({ label, children }) {
@@ -194,7 +191,11 @@ export default function AdminUsersPage() {
         if (form.role === "teacher") {
           profilePayload.teacher = { degree: form.teacherDegree };
         }
-        await createUser({ ...payload, ...profilePayload, password: form.password });
+        const createdUser = await createUser({ ...payload, ...profilePayload, password: form.password });
+        if (createdUser?.id && currentUser?.id && createdUser.id === currentUser.id) {
+          const nextSession = { ...getSession(), user: createdUser };
+          setSession(nextSession);
+        }
         setNotice("Đã tạo tài khoản.");
       }
       closeModal();
@@ -299,7 +300,7 @@ export default function AdminUsersPage() {
                       <tr key={user.id}>
                         <td>
                           <div className="user-cell">
-                            <Avatar user={user} />
+                            <AdminAvatar user={user} />
                             <div>
                               <strong>{fullName(user)}</strong>
                               <span>{user.email}</span>

@@ -58,6 +58,34 @@ const progressSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    status: {
+      type: String,
+      enum: ["pending_teacher_approval", "approved", "needs_revision", ""],
+      default: "",
+    },
+    reviewHistory: [{
+      action: {
+        type: String,
+        enum: ["submitted", "approved", "rejected", "resubmitted"],
+        required: true
+      },
+      stage: {
+        type: String,
+        enum: ["register", "analysis", "development", "report", "complete"],
+        required: true
+      },
+      teacherComment: String,
+      reviewedAt: Date,
+      reviewerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Teacher"
+      }
+    }],
+    eligibleForDefense: {
+      type: Boolean,
+      default: false
+    },
+    defenseEligibleAt: Date
   },
   {
     timestamps: true,
@@ -73,6 +101,12 @@ progressSchema.methods.calculatePercentage = function() {
 
 progressSchema.pre("save", function() {
   this.percentage = this.calculatePercentage();
+  
+  // Auto-set eligibleForDefense when stage 5 is approved
+  if (this.currentStage === "complete" && this.status === "approved") {
+    this.eligibleForDefense = true;
+    this.defenseEligibleAt = this.defenseEligibleAt || new Date();
+  }
 });
 
 const Progress = mongoose.model("Progress", progressSchema);

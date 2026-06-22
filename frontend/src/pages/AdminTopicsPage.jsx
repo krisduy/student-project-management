@@ -167,8 +167,13 @@ export default function AdminTopicsPage() {
       <section className="admin-content">
         <header className="page-header">
           <p className="eyebrow">Admin</p>
-          <h1>Quản lý đề tài</h1>
-          <p>Tạo và cập nhật danh mục đề tài. Sinh viên sẽ đăng ký đề tài và chọn giảng viên hướng dẫn ở luồng riêng.</p>
+          <h1>
+            Quản lý đề tài
+            <span className="highlight" style={{ marginLeft: 8 }} />
+          </h1>
+          <p>
+            Tạo và cập nhật danh mục đề tài. Sinh viên sẽ đăng ký đề tài và chọn giảng viên hướng dẫn ở luồng riêng.
+          </p>
         </header>
 
         <div className="stats-grid">
@@ -215,8 +220,8 @@ export default function AdminTopicsPage() {
             </div>
           </div>
 
-          {notice ? <div className="notice notice-success">{notice}</div> : null}
-          {error ? <div className="notice notice-error">{error}</div> : null}
+          {notice ? <div className="notice notice-success" style={{ marginTop: 16, marginLeft: 24, marginRight: 24 }}>{notice}</div> : null}
+          {error ? <div className="notice notice-error" style={{ marginTop: 16, marginLeft: 24, marginRight: 24 }}>{error}</div> : null}
 
           <div className="table-container">
             <table className="data-table">
@@ -241,8 +246,10 @@ export default function AdminTopicsPage() {
                     return (
                       <tr key={getId(topic)}>
                         <td>
-                          <strong className="block text-sm font-semibold">{topic.topicCode}</strong>
-                          <span className="block text-sm text-slate-600 mt-1">{topic.topicName}</span>
+                          <div>
+                            <strong className="block text-sm font-semibold">{topic.topicCode}</strong>
+                            <span className="block text-sm text-slate-600 mt-1">{topic.topicName}</span>
+                          </div>
                         </td>
                         <td>
                           <span className={`role-badge ${isAssigned ? "badge-assigned" : "badge-available"}`}>
@@ -296,7 +303,7 @@ export default function AdminTopicsPage() {
               </Field>
             </div>
 
-            {error && <div className="notice notice-error" style={{ marginTop: '20px' }}>{error}</div>}
+            {error && <div className="notice notice-error" style={{ marginTop: 20 }}>{error}</div>}
 
             <div className="modal-actions">
               <button className="btn btn-secondary" type="button" onClick={closeModal} disabled={isSaving}>Hủy</button>

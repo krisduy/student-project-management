@@ -9,7 +9,8 @@ class DefenseScoreService {
     const { search, status } = query;
     const skip = (page - 1) * limit;
 
-    const matchStage = { completedStages: "complete" };
+    // Only show topics where stage 5 is approved by teacher (eligibleForDefense = true)
+    const matchStage = { eligibleForDefense: true };
 
     let searchQuery = {};
     if (search) {
@@ -125,8 +126,8 @@ class DefenseScoreService {
     }
 
     const progress = await Progress.findOne({ topicId });
-    if (!progress?.completedStages?.includes("complete")) {
-      const err = new Error("Đồ án chưa hoàn thành giai đoạn 5, không thể nhập điểm.");
+    if (!progress?.eligibleForDefense) {
+      const err = new Error("Đồ án chưa hoàn thành giai đoạn 5 hoặc chưa được xác nhận bởi giảng viên, không thể nhập điểm.");
       err.status = 400;
       throw err;
     }
@@ -209,7 +210,7 @@ class DefenseScoreService {
     if (!score) return null;
 
     const progress = await Progress.findOne({ studentId: student._id }).lean();
-    const isEligible = progress?.completedStages?.includes("complete");
+    const isEligible = progress?.eligibleForDefense === true;
 
     return { ...score, isEligible };
   }

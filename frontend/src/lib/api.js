@@ -177,6 +177,10 @@ export function getMyProgress() {
   return apiFetch("/progresses/me");
 }
 
+export function getMyNotifications() {
+  return apiFetch("/progresses/me/notifications");
+}
+
 export function getStudentProgressByTeacher() {
   return apiFetch("/progresses/teacher/students");
 }
@@ -196,6 +200,27 @@ export function updateMyStage(progressId, payload) {
   return apiFetch(`/progresses/stage/${progressId}`, {
     method: "PUT",
     body: JSON.stringify(payload),
+  });
+}
+
+export function approveStage(progressId, comment = "") {
+  return apiFetch(`/progresses/${progressId}/approve`, {
+    method: "PUT",
+    body: JSON.stringify({ comment }),
+  });
+}
+
+export function rejectStage(progressId, comment) {
+  return apiFetch(`/progresses/${progressId}/reject`, {
+    method: "PUT",
+    body: JSON.stringify({ comment }),
+  });
+}
+
+export function resubmitStage(progressId, notes = "") {
+  return apiFetch(`/progresses/${progressId}/resubmit`, {
+    method: "PUT",
+    body: JSON.stringify({ notes }),
   });
 }
 

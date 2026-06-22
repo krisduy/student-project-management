@@ -10,6 +10,7 @@ import AdminUsersPage from "./pages/AdminUsersPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RoleHomePage from "./pages/RoleHomePage.jsx";
 import StudentDefenseScorePage from "./pages/StudentDefenseScorePage.jsx";
+import StudentNotificationsPage from "./pages/StudentNotificationsPage.jsx";
 import StudentTopicsPage from "./pages/StudentTopicsPage.jsx";
 import StudentProfilePage from "./pages/StudentProfilePage.jsx";
 import StudentProgressPage from "./pages/StudentProgressPage.jsx";
@@ -189,6 +190,14 @@ const router = createBrowserRouter([
         element: (
           <RoleProtectedRoute role="student">
             <StudentProfilePage />
+          </RoleProtectedRoute>
+        ),
+      },
+      {
+        path: "student/notifications",
+        element: (
+          <RoleProtectedRoute role="student">
+            <StudentNotificationsPage />
           </RoleProtectedRoute>
         ),
       },

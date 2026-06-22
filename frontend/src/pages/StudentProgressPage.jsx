@@ -19,7 +19,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar.jsx";
-import { getMyTopicRegistration, getMyProgress, updateMyStage } from "../lib/api.js";
+import { getMyTopicRegistration, getMyProgress, updateMyStage, resubmitStage } from "../lib/api.js";
 
 function fullName(user) {
   return [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "N/A";
@@ -138,10 +138,17 @@ function StepConnector({ isCompleted }) {
   );
 }
 
-function StageCard({ stage, isCompleted, isCurrent, isNext, onClick, disabled, index }) {
+function StageCard({ stage, isCompleted, isCurrent, isNext, onClick, disabled, index, stageStatus }) {
   const Icon = stage.icon;
-  const isClickable = isNext && !disabled;
+  const isClickable = isNext && !disabled && stageStatus !== "pending_teacher_approval" && stageStatus !== "needs_revision";
   const stagePct = PERCENTAGES[stage.key];
+
+  let statusBadge = null;
+  if (isCurrent && stageStatus === "pending_teacher_approval") {
+    statusBadge = <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold animate-pulse"><Clock size={10} /> Chờ xác nhận</span>;
+  } else if (isCurrent && stageStatus === "needs_revision") {
+    statusBadge = <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-100 text-red-700 text-xs font-bold"><AlertCircle size={10} /> Cần chỉnh sửa</span>;
+  }
 
   return (
     <div className="relative flex items-start gap-0">
@@ -193,11 +200,7 @@ function StageCard({ stage, isCompleted, isCurrent, isNext, onClick, disabled, i
                   <CheckCircle2 size={10} /> Hoàn thành
                 </span>
               )}
-              {isCurrent && !isCompleted && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-indigo-500 text-white text-xs font-bold animate-pulse">
-                  <Clock size={10} /> Đang thực hiện
-                </span>
-              )}
+              {isCurrent && !isCompleted && statusBadge}
             </div>
             <p className={`text-sm leading-relaxed ${isCompleted ? "text-slate-600" : isCurrent ? "text-slate-500" : "text-slate-400"}`}>{stage.description}</p>
           </div>
@@ -212,6 +215,14 @@ function StageCard({ stage, isCompleted, isCurrent, isNext, onClick, disabled, i
                 className="mt-1 flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-700 transition-colors"
               >
                 Cập nhật <ChevronRight size={12} />
+              </button>
+            )}
+            {isCurrent && stageStatus === "needs_revision" && (
+              <button
+                onClick={onClick}
+                className="mt-1 flex items-center gap-1 text-xs font-bold text-red-600 hover:text-red-700 transition-colors"
+              >
+                Gửi lại <RefreshCw size={12} />
               </button>
             )}
           </div>
@@ -436,9 +447,19 @@ export default function StudentProgressPage() {
     setIsSaving(true);
     setError("");
     try {
-      const updated = await updateMyStage(progress._id, { stage: stageKey, notes });
-      setProgress(updated);
-      setNotice(`Đã cập nhật giai đoạn "${STAGES.find((s) => s.key === stageKey)?.label}" thành công!`);
+      const stageStatus = getStageStatus(stageKey);
+      
+      if (stageStatus === "needs_revision") {
+        // Resubmit rejected stage
+        const updated = await resubmitStage(progress._id, notes);
+        setProgress(updated);
+        setNotice(`Đã gửi lại giai đoạn "${STAGES.find((s) => s.key === stageKey)?.label}" để xác nhận!`);
+      } else {
+        // New stage update
+        const updated = await updateMyStage(progress._id, { stage: stageKey, notes });
+        setProgress(updated);
+        setNotice(`Đã cập nhật giai đoạn "${STAGES.find((s) => s.key === stageKey)?.label}" và chờ giảng viên xác nhận!`);
+      }
       setSelectedStage(null);
       setTimeout(() => setNotice(""), 4000);
     } catch (err) {
@@ -448,12 +469,26 @@ export default function StudentProgressPage() {
     }
   }
 
+  function getStageStatus(stageKey) {
+    if (!progress) return "";
+    const currentStage = progress.currentStage;
+    if (currentStage !== stageKey) return "";
+    return progress.status || "";
+  }
+
   function getNextStage() {
     const current = progress?.currentStage || "";
     const idx = getStageIndex(current);
     if (idx >= STAGE_ORDER.length - 1) return null;
     if (current === "") return "register";
     return STAGE_ORDER[idx + 1];
+  }
+
+  function canProceedToNextStage() {
+    if (!progress) return false;
+    const current = progress.currentStage;
+    if (!current) return true; // No current stage, can start
+    return getStageStatus(current) === "approved" || completedStageSet.has(current);
   }
 
   if (isLoading) return <LoadingSkeleton />;
@@ -465,6 +500,7 @@ export default function StudentProgressPage() {
   const currentStageData = STAGES.find((s) => s.key === progress?.currentStage);
   const CurrentIcon = currentStageData?.icon || BookOpen;
   const hasProgress = progress && progress._id;
+  const canProceed = canProceedToNextStage();
 
   return (
     <main className="admin-shell">
@@ -552,8 +588,10 @@ export default function StudentProgressPage() {
                   isCompleted={completedStageSet.has(stage.key)}
                   isCurrent={progress?.currentStage === stage.key}
                   isNext={stage.key === nextStage}
+                  stageStatus={progress?.currentStage === stage.key ? progress.status : ""}
                   onClick={() => setSelectedStage(stage)}
                   disabled={!progress}
+                  canProceed={canProceed}
                 />
               ))}
             </div>

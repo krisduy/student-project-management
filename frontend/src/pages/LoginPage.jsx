@@ -223,13 +223,15 @@ export default function LoginPage() {
           </button>
 
           <p className="login-note">
-  Hệ thống sẽ tự động chuyển đến trang làm việc phù hợp với vai trò của bạn.
-</p>
+            Hệ thống sẽ tự động chuyển đến trang làm việc phù hợp với vai trò của bạn.
+          </p>
+        </div>
+      </form>
+    </section>
 
-</div>
-
-</form>
-
-<p className="auth-footer">
-  © 2026 FBU · Hệ thống quản lý đồ án tốt nghiệp
-</p>
+    <p className="auth-footer">
+      © 2026 FBU · Hệ thống quản lý đồ án tốt nghiệp
+    </p>
+  </main>
+  );
+}

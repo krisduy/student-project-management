@@ -1,5 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { Award, BookOpenCheck, GraduationCap, LogOut, Home, UserRound, TrendingUp } from "lucide-react";
+import {
+  Award,
+  Bell,
+  BookOpenCheck,
+  GraduationCap,
+  LogOut,
+  Home,
+  UserRound,
+  TrendingUp,
+} from "lucide-react";
 import { clearSession, getSession } from "../lib/session.js";
 import { AvatarDisplay } from "./AvatarDisplay.jsx";
 
@@ -8,15 +17,6 @@ function fullName(user) {
     [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
     user?.email ||
     "Người dùng"
-  );
-}
-
-function initials(user) {
-  return (
-    [user?.firstName?.[0], user?.lastName?.[0]]
-      .filter(Boolean)
-      .join("")
-      .toUpperCase() || "S"
   );
 }
 
@@ -35,6 +35,7 @@ export default function StudentSidebar() {
     { path: "/student", icon: Home, label: "Tổng quan" },
     { path: "/student/topics", icon: BookOpenCheck, label: "Đăng ký đề tài" },
     { path: "/student/progress", icon: TrendingUp, label: "Theo dõi tiến độ" },
+    { path: "/student/notifications", icon: Bell, label: "Thông báo" },
     { path: "/student/defense-scores", icon: Award, label: "Điểm bảo vệ" },
     { path: "/student/profile", icon: UserRound, label: "Hồ sơ cá nhân" },
   ];

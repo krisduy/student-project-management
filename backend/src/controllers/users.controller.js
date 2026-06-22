@@ -31,7 +31,13 @@ class UserController {
 
       res.status(201).json(newUser);
     } catch (error) {
-      res.status(error.statusCode || 500).json({ error: error.message });
+      console.error("CREATE USER ERROR");
+      console.error(error);
+      console.error(error.stack);
+
+      res.status(error.statusCode || 500).json({
+        error: error.message,
+      });
     }
   }
 
@@ -74,7 +80,10 @@ class UserController {
   async updateAvatar(req, res) {
     try {
       const { avatar } = req.body;
-      const updatedUser = await this.userService.updateAvatar(req.user.id, avatar);
+      const updatedUser = await this.userService.updateAvatar(
+        req.user.id,
+        avatar,
+      );
 
       if (!updatedUser) {
         return res.status(404).json({ error: "User not found" });

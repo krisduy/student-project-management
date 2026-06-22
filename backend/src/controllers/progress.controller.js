@@ -1,5 +1,6 @@
 const CreateProgressDto = require("../dtos/progress/create-progress.dto");
 const UpdateProgressDto = require("../dtos/progress/update-progress.dto");
+const { authorizeRoles } = require("../middlewares/auth.middleware");
 
 class ProgressController {
   constructor(progressService) {
@@ -114,6 +115,56 @@ class ProgressController {
       res.json(updated);
     } catch (error) {
       res.status(500).json({ error: error.message });
+    }
+  }
+
+  async approveStage(req, res) {
+    try {
+      const { progressId } = req.params;
+      const { comment } = req.body;
+      const teacherId = req.user?.teacherId;
+
+      if (!teacherId) {
+        return res.status(403).json({ error: "Không có quyền thực hiện" });
+      }
+
+      const updated = await this.progressService.approveStage(progressId, teacherId, comment);
+      res.json(updated);
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ error: error.message });
+    }
+  }
+
+  async rejectStage(req, res) {
+    try {
+      const { progressId } = req.params;
+      const { comment } = req.body;
+      const teacherId = req.user?.teacherId;
+
+      if (!teacherId) {
+        return res.status(403).json({ error: "Không có quyền thực hiện" });
+      }
+
+      if (!comment || !comment.trim()) {
+        return res.status(400).json({ error: "Vui lòng nhập nhận xét khi từ chối" });
+      }
+
+      const updated = await this.progressService.rejectStage(progressId, teacherId, comment.trim());
+      res.json(updated);
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ error: error.message });
+    }
+  }
+
+  async resubmitStage(req, res) {
+    try {
+      const { progressId } = req.params;
+      const { notes } = req.body;
+
+      const updated = await this.progressService.resubmitStage(progressId, notes);
+      res.json(updated);
+    } catch (error) {
+      res.status(error.statusCode || 500).json({ error: error.message });
     }
   }
 

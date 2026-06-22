@@ -1,5 +1,13 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { BookCheck, GraduationCap, LogOut, Home, Telescope, UserRound } from "lucide-react";
+import {
+  BookMarked,
+  GraduationCap,
+  LogOut,
+  Home,
+  TrendingUp,
+  UserRound,
+  Bell,
+} from "lucide-react";
 import { clearSession, getSession } from "../lib/session.js";
 import { AvatarDisplay } from "./AvatarDisplay.jsx";
 
@@ -33,8 +41,12 @@ export default function TeacherSidebar() {
 
   const navItems = [
     { path: "/teacher", icon: Home, label: "Tổng quan" },
-    { path: "/teacher/topics", icon: BookCheck, label: "Đề tài đang hướng dẫn" },
-    { path: "/teacher/progress", icon: Telescope, label: "Theo dõi tiến độ" },
+    {
+      path: "/teacher/topics",
+      icon: BookMarked,
+      label: "Đề tài đang hướng dẫn",
+    },
+    { path: "/teacher/progress", icon: TrendingUp, label: "Theo dõi tiến độ" },
     { path: "/teacher/profile", icon: UserRound, label: "Hồ sơ cá nhân" },
   ];
 

@@ -2,20 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 import { Edit3, Filter, Plus, Search, Trash2, ShieldCheck, GraduationCap, Award, X } from "lucide-react";
 import AdminSidebar from "../components/AdminSidebar.jsx";
 import { createUser, deleteUser, listTeachers, updateTeacher, updateUser } from "../lib/api.js";
+import { AvatarDisplay } from "../components/AvatarDisplay.jsx";
 
 const degrees = ["Thạc sĩ", "Tiến sĩ", "Phó giáo sư", "Giáo sư"];
 const emptyForm = { firstName: "", lastName: "", email: "", password: "", degree: "Thạc sĩ" };
 
 function getId(record) { return record?._id || record?.id || ""; }
 function fullName(user) { return [user?.firstName, user?.lastName].filter(Boolean).join(" ") || user?.email || "Giảng viên"; }
-function initials(user) { return [user?.firstName?.[0], user?.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "GV"; }
 function formatDate(value) { if (!value) return "--"; return new Intl.DateTimeFormat("vi-VN", { day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(value)); }
 
 function Field({ label, children }) { return <label className="form-field"><span>{label}</span>{children}</label>; }
 function inputClass(extra = "") { return `form-input ${extra}`; }
 
-function Avatar({ user }) {
-  return <div className="grid size-12 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-sm font-bold text-white shadow-md">{initials(user)}</div>;
+function TeacherAvatar({ user }) {
+  return <AvatarDisplay user={user} size="sm" />;
 }
 
 export default function AdminTeachersPage() {
@@ -143,7 +143,7 @@ export default function AdminTeachersPage() {
                 {isLoading ? <tr><td colSpan="4" className="empty-state"><span>Đang tải danh sách giảng viên...</span></td></tr>
                 : filteredTeachers.length ? filteredTeachers.map((teacher) => (
                   <tr key={getId(teacher)}>
-                    <td><div className="user-cell"><Avatar user={teacher.userId} /><div><strong>{fullName(teacher.userId)}</strong><span>{teacher.userId?.email}</span></div></div></td>
+                    <td><div className="user-cell"><TeacherAvatar user={teacher.userId} /><div><strong>{fullName(teacher.userId)}</strong><span>{teacher.userId?.email}</span></div></div></td>
                     <td><span className="role-badge badge-teacher">{teacher.degree}</span></td>
                     <td className="text-sm text-slate-600">{formatDate(teacher.createdAt)}</td>
                     <td>

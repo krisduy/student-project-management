@@ -93,7 +93,7 @@ export default function StudentDefenseScorePage() {
 
   if (isLoading) return <LoadingSkeleton />;
 
-  const isComplete = progress?.completedStages?.includes("complete");
+  const isComplete = progress?.eligibleForDefense === true;
   const hasScore = score?.processScore != null;
 
   return (

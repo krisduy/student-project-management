@@ -22,6 +22,8 @@ import {
   getStudentProgressByTeacher,
   getProgressByTopic,
   updateProgress,
+  approveStage,
+  rejectStage,
 } from "../lib/api.js";
 
 function fullName(user) {
@@ -125,6 +127,40 @@ function StudentDetailModal({ student, isOpen, onClose, onRefresh }) {
       console.error("Failed to load detail:", err);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function handleApprove() {
+    if (!student?._id) return;
+    setIsSaving(true);
+    try {
+      await approveStage(student._id, comment);
+      onRefresh();
+      onClose();
+    } catch (err) {
+      console.error("Failed to approve:", err);
+      alert("Lỗi xác nhận: " + err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function handleReject() {
+    if (!student?._id) return;
+    if (!comment.trim()) {
+      alert("Vui lòng nhập nhận xét khi từ chối");
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await rejectStage(student._id, comment);
+      onRefresh();
+      onClose();
+    } catch (err) {
+      console.error("Failed to reject:", err);
+      alert("Lỗi từ chối: " + err.message);
+    } finally {
+      setIsSaving(false);
     }
   }
 
@@ -297,19 +333,50 @@ function StudentDetailModal({ student, isOpen, onClose, onRefresh }) {
                 <X size={16} />
                 <span>Hủy</span>
               </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleSaveComment}
-                disabled={isSaving}
-              >
-                {isSaving ? (
-                  <Loader size={16} className="animate-spin" />
-                ) : (
-                  <Save size={16} />
-                )}
-                <span>{isSaving ? "Đang lưu..." : "Lưu nhận xét"}</span>
-              </button>
+              {student?.status === "pending_teacher_approval" ? (
+                <>
+                  <button
+                    type="button"
+                    className="btn bg-red-50 text-red-600 border border-red-200 hover:bg-red-100"
+                    onClick={handleReject}
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <Loader size={16} className="animate-spin" />
+                    ) : (
+                      <X size={16} />
+                    )}
+                    <span>{isSaving ? "Đang xử lý..." : "Từ chối"}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary bg-emerald-600 hover:bg-emerald-700"
+                    onClick={handleApprove}
+                    disabled={isSaving}
+                  >
+                    {isSaving ? (
+                      <Loader size={16} className="animate-spin" />
+                    ) : (
+                      <CheckCircle2 size={16} />
+                    )}
+                    <span>{isSaving ? "Đang xử lý..." : "Xác nhận"}</span>
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSaveComment}
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <Loader size={16} className="animate-spin" />
+                  ) : (
+                    <Save size={16} />
+                  )}
+                  <span>{isSaving ? "Đang lưu..." : "Lưu nhận xét"}</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
