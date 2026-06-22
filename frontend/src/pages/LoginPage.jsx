@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  AcademicCap,
   ArrowRight,
   BookOpen,
   CheckCircle2,
@@ -199,7 +198,7 @@ export default function LoginPage() {
                 <span>Quản trị viên</span>
               </div>
               <div className="role-pill-item">
-                <AcademicCap size={13} />
+                <GraduationCap size={13} />
                 <span>Giảng viên</span>
               </div>
               <div className="role-pill-item">
