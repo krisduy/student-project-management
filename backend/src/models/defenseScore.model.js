@@ -72,7 +72,7 @@ defenseScoreSchema.methods.calculateFinalScore = function () {
   return final;
 };
 
-defenseScoreSchema.pre("save", function (next) {
+defenseScoreSchema.pre("save", function () {
   if (
     this.processScore != null ||
     this.reportScore != null ||
@@ -80,7 +80,6 @@ defenseScoreSchema.pre("save", function (next) {
   ) {
     this.finalScore = this.calculateFinalScore();
   }
-  next();
 });
 
 defenseScoreSchema.index({ studentId: 1 });

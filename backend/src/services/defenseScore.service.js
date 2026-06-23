@@ -1,5 +1,5 @@
 const DefenseScore = require("../models/defenseScore.model");
-const Progress = require("../models/progress.model");
+const { Progress } = require("../models/progress.model");
 const Topic = require("../models/topic.model");
 const Student = require("../models/student.model");
 const mongoose = require("mongoose");
@@ -41,7 +41,7 @@ class DefenseScoreService {
           as: "topic",
         },
       },
-      { $unwind: { path: "$topic", preserveNullAndEmptyArrays: false } },
+      { $unwind: { path: "$topic", preserveNullAndEmptyArrays: true } },
       {
         $lookup: {
           from: "students",
@@ -50,7 +50,7 @@ class DefenseScoreService {
           as: "student",
         },
       },
-      { $unwind: { path: "$student", preserveNullAndEmptyArrays: false } },
+      { $unwind: { path: "$student", preserveNullAndEmptyArrays: true } },
       {
         $lookup: {
           from: "users",
@@ -59,7 +59,7 @@ class DefenseScoreService {
           as: "student.userId",
         },
       },
-      { $unwind: { path: "$student.userId", preserveNullAndEmptyArrays: false } },
+      { $unwind: { path: "$student.userId", preserveNullAndEmptyArrays: true } },
       {
         $lookup: {
           from: "defensescores",

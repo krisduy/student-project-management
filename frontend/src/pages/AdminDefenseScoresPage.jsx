@@ -169,6 +169,10 @@ export default function AdminDefenseScoresPage() {
       setScoreError("Điểm đã bị khóa, không thể lưu.");
       return;
     }
+    if (!selectedRecord.topic || !selectedRecord.student) {
+      setScoreError("Thiếu thông tin đề tài hoặc sinh viên, không thể lưu điểm.");
+      return;
+    }
     setIsSaving(true);
     setScoreError("");
     setScoreSuccess("");
@@ -201,6 +205,10 @@ export default function AdminDefenseScoresPage() {
   }
 
   async function handleLockUnlock(record) {
+    if (!record.topic) {
+      alert("Thiếu thông tin đề tài.");
+      return;
+    }
     try {
       if (record.defenseScore?.isLocked) {
         await unlockDefenseScore(record.topic._id);
@@ -310,10 +318,10 @@ export default function AdminDefenseScoresPage() {
                     const isLocked = score?.isLocked;
                     return (
                       <tr key={record._id || idx} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                        <td className="px-5 py-3.5 font-mono text-xs font-bold text-indigo-600">{record.topic.topicCode}</td>
-                        <td className="px-5 py-3.5 font-semibold text-slate-800 max-w-xs truncate">{record.topic.topicName}</td>
-                        <td className="px-5 py-3.5 text-slate-700">{fullName(record.student.userId)}</td>
-                        <td className="px-5 py-3.5 font-mono text-xs text-slate-500">{record.student.studentCode}</td>
+                        <td className="px-5 py-3.5 font-mono text-xs font-bold text-indigo-600">{record.topic?.topicCode ?? "—"}</td>
+                        <td className="px-5 py-3.5 font-semibold text-slate-800 max-w-xs truncate">{record.topic?.topicName ?? "—"}</td>
+                        <td className="px-5 py-3.5 text-slate-700">{record.student ? fullName(record.student.userId) : "—"}</td>
+                        <td className="px-5 py-3.5 font-mono text-xs text-slate-500">{record.student?.studentCode ?? "—"}</td>
                         <td className="px-5 py-3.5 text-center"><ScoreBadge score={score?.processScore} /></td>
                         <td className="px-5 py-3.5 text-center"><ScoreBadge score={score?.reportScore} /></td>
                         <td className="px-5 py-3.5 text-center"><ScoreBadge score={score?.rebuttalScore} /></td>
@@ -404,7 +412,7 @@ export default function AdminDefenseScoresPage() {
                     <Award size={20} />
                     {existingScore ? "Sửa điểm bảo vệ" : "Nhập điểm bảo vệ"}
                   </h2>
-                  <p className="text-indigo-200 text-sm mt-0.5">{selectedRecord.topic.topicName}</p>
+                  <p className="text-indigo-200 text-sm mt-0.5">{selectedRecord.topic?.topicName ?? "—"}</p>
                 </div>
                 <button
                   className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all"
@@ -419,15 +427,15 @@ export default function AdminDefenseScoresPage() {
                 <div className="flex items-center gap-6 text-sm">
                   <div>
                     <span className="text-slate-400 font-semibold uppercase tracking-wide text-xs">Sinh viên</span>
-                    <p className="font-bold text-slate-800">{fullName(selectedRecord.student.userId)}</p>
+                    <p className="font-bold text-slate-800">{selectedRecord.student ? fullName(selectedRecord.student.userId) : "—"}</p>
                   </div>
                   <div>
                     <span className="text-slate-400 font-semibold uppercase tracking-wide text-xs">Mã SV</span>
-                    <p className="font-bold text-slate-800">{selectedRecord.student.studentCode}</p>
+                    <p className="font-bold text-slate-800">{selectedRecord.student?.studentCode ?? "—"}</p>
                   </div>
                   <div>
                     <span className="text-slate-400 font-semibold uppercase tracking-wide text-xs">Mã đề tài</span>
-                    <p className="font-bold text-indigo-600">{selectedRecord.topic.topicCode}</p>
+                    <p className="font-bold text-indigo-600">{selectedRecord.topic?.topicCode ?? "—"}</p>
                   </div>
                 </div>
               </div>
