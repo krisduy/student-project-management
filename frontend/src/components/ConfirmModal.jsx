@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle, CheckCircle2, X } from "lucide-react";
 
 export default function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText = "Xác nhận", cancelText = "Hủy", danger = false }) {
   useEffect(() => {
@@ -15,9 +15,17 @@ export default function ConfirmModal({ isOpen, title, message, onConfirm, onCanc
 
   return (
     <div className="modal-backdrop" role="presentation" onClick={(e) => e.target === e.currentTarget && onCancel?.()}>
-      <div className="confirm-modal" role="dialog" aria-modal="true">
+      <div className={`confirm-modal ${danger ? "danger" : ""}`} role="dialog" aria-modal="true">
         <div className="confirm-icon">
-          {danger ? <AlertTriangle size={28} /> : <div className="confirm-icon-circle" />}
+          {danger ? (
+            <div className="confirm-icon-circle">
+              <AlertTriangle size={28} color="#ffffff" />
+            </div>
+          ) : (
+            <div className="confirm-icon-circle">
+              <CheckCircle2 size={28} color="#ffffff" />
+            </div>
+          )}
         </div>
         {title && <h3>{title}</h3>}
         <p>{message}</p>
