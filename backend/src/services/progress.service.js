@@ -174,6 +174,12 @@ class ProgressService {
     }
 
     progress.status = "approved";
+
+    // Auto-set eligibleForDefense when approving stage 5 (complete)
+    if (progress.currentStage === "complete") {
+      progress.eligibleForDefense = true;
+      progress.defenseEligibleAt = progress.defenseEligibleAt || new Date();
+    }
     
     progress.reviewHistory = progress.reviewHistory || [];
     progress.reviewHistory.push({

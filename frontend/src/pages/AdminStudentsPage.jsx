@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Edit3, Filter, Plus, Search, Trash2, Users, BookOpen, GraduationCap, X } from "lucide-react";
 import AdminSidebar from "../components/AdminSidebar.jsx";
+import ConfirmModal from "../components/ConfirmModal.jsx";
 import { createUser, deleteUser, listStudents, updateStudent, updateUser } from "../lib/api.js";
 import { AvatarDisplay } from "../components/AvatarDisplay.jsx";
 
@@ -31,6 +32,7 @@ export default function AdminStudentsPage() {
   const [editingStudent, setEditingStudent] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [isSaving, setIsSaving] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const filteredStudents = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -89,11 +91,15 @@ export default function AdminStudentsPage() {
   }
 
   async function handleDelete(student) {
-    const user = student.userId;
-    if (!window.confirm(`Xóa sinh viên ${fullName(user)}?`)) return;
+    setConfirmDelete(student);
+  }
+
+  async function confirmDeleteStudent() {
+    const user = confirmDelete?.userId;
     setError(""); setNotice("");
     try { await deleteUser(getId(user)); setNotice("Đã xóa sinh viên."); await loadStudents(); }
     catch (err) { setError(err.message || "Không thể xóa sinh viên."); }
+    finally { setConfirmDelete(null); }
   }
 
   return (
@@ -199,6 +205,17 @@ export default function AdminStudentsPage() {
           </form>
         </div>
       ) : null}
+
+      <ConfirmModal
+        isOpen={!!confirmDelete}
+        title="Xác nhận xóa"
+        message={`Bạn có chắc muốn xóa sinh viên "${fullName(confirmDelete?.userId)}"? Hành động này không thể hoàn tác.`}
+        onConfirm={confirmDeleteStudent}
+        onCancel={() => setConfirmDelete(null)}
+        confirmText="Xóa"
+        cancelText="Hủy"
+        danger
+      />
     </main>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Edit3, Filter, Plus, Search, Trash2, ShieldCheck, GraduationCap, Award, X } from "lucide-react";
 import AdminSidebar from "../components/AdminSidebar.jsx";
+import ConfirmModal from "../components/ConfirmModal.jsx";
 import { createUser, deleteUser, listTeachers, updateTeacher, updateUser } from "../lib/api.js";
 import { AvatarDisplay } from "../components/AvatarDisplay.jsx";
 
@@ -29,6 +30,7 @@ export default function AdminTeachersPage() {
   const [editingTeacher, setEditingTeacher] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [isSaving, setIsSaving] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const filteredTeachers = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -86,11 +88,15 @@ export default function AdminTeachersPage() {
   }
 
   async function handleDelete(teacher) {
-    const user = teacher.userId;
-    if (!window.confirm(`Xóa giảng viên ${fullName(user)}?`)) return;
+    setConfirmDelete(teacher);
+  }
+
+  async function confirmDeleteTeacher() {
+    const user = confirmDelete?.userId;
     setError(""); setNotice("");
     try { await deleteUser(getId(user)); setNotice("Đã xóa giảng viên."); await loadTeachers(); }
     catch (err) { setError(err.message || "Không thể xóa giảng viên."); }
+    finally { setConfirmDelete(null); }
   }
 
   return (
@@ -188,6 +194,17 @@ export default function AdminTeachersPage() {
           </form>
         </div>
       ) : null}
+
+      <ConfirmModal
+        isOpen={!!confirmDelete}
+        title="Xác nhận xóa"
+        message={`Bạn có chắc muốn xóa giảng viên "${fullName(confirmDelete?.userId)}"? Hành động này không thể hoàn tác.`}
+        onConfirm={confirmDeleteTeacher}
+        onCancel={() => setConfirmDelete(null)}
+        confirmText="Xóa"
+        cancelText="Hủy"
+        danger
+      />
     </main>
   );
 }

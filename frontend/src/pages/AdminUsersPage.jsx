@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import AdminSidebar from "../components/AdminSidebar.jsx";
+import ConfirmModal from "../components/ConfirmModal.jsx";
 import { createUser, deleteUser, listUsers, updateUser } from "../lib/api.js";
 import { getSession, setSession } from "../lib/session.js";
 import { AvatarDisplay } from "../components/AvatarDisplay.jsx";
@@ -99,6 +100,7 @@ export default function AdminUsersPage() {
   const [editingUser, setEditingUser] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [isSaving, setIsSaving] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const filteredUsers = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -213,15 +215,20 @@ export default function AdminUsersPage() {
       setError("Không thể xóa tài khoản đang đăng nhập.");
       return;
     }
-    if (!window.confirm(`Xóa tài khoản ${user.email}?`)) return;
+    setConfirmDelete(user);
+  }
+
+  async function confirmDeleteUser() {
     setError("");
     setNotice("");
     try {
-      await deleteUser(user.id);
+      await deleteUser(confirmDelete.id);
       setNotice("Đã xóa tài khoản.");
       await loadUsers();
     } catch (err) {
       setError(err.message || "Không thể xóa tài khoản.");
+    } finally {
+      setConfirmDelete(null);
     }
   }
 
@@ -414,6 +421,17 @@ export default function AdminUsersPage() {
           </form>
         </div>
       ) : null}
+
+      <ConfirmModal
+        isOpen={!!confirmDelete}
+        title="Xác nhận xóa"
+        message={`Bạn có chắc muốn xóa tài khoản "${confirmDelete?.email}"? Hành động này không thể hoàn tác.`}
+        onConfirm={confirmDeleteUser}
+        onCancel={() => setConfirmDelete(null)}
+        confirmText="Xóa"
+        cancelText="Hủy"
+        danger
+      />
     </main>
   );
 }

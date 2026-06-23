@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import StudentSidebar from "../components/StudentSidebar.jsx";
+import ConfirmModal from "../components/ConfirmModal.jsx";
 import {
   createProgress,
   getMyTopicRegistration,
@@ -35,6 +36,7 @@ export default function StudentTopicsPage() {
   const [isRegistering, setIsRegistering] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [confirmRegister, setConfirmRegister] = useState(null);
 
   const filteredTopics = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -65,7 +67,11 @@ export default function StudentTopicsPage() {
     const topicId = getId(topic);
     const teacherId = teacherSelections[topicId];
     if (!teacherId) { setError("Vui lòng chọn giảng viên hướng dẫn trước khi đăng ký."); return; }
-    if (!window.confirm(`Đăng ký đề tài ${topic.topicCode}?`)) return;
+    setConfirmRegister({ topic, topicId, teacherId });
+  }
+
+  async function confirmRegisterTopic() {
+    const { topic, topicId, teacherId } = confirmRegister;
     setError(""); setNotice(""); setIsRegistering(topicId);
     try {
       const registeredTopic = await registerTopic(topicId, teacherId);
@@ -85,7 +91,7 @@ export default function StudentTopicsPage() {
     } catch (err) {
       if (err.status === 409) setError("Bạn đã đăng ký đề tài hoặc đề tài này vừa có người đăng ký.");
       else setError(err.message || "Không thể đăng ký đề tài.");
-    } finally { setIsRegistering(""); }
+    } finally { setIsRegistering(""); setConfirmRegister(null); }
   }
 
   return (
@@ -247,6 +253,16 @@ export default function StudentTopicsPage() {
           </aside>
         </div>
       </section>
+
+      <ConfirmModal
+        isOpen={!!confirmRegister}
+        title="Xác nhận đăng ký"
+        message={`Bạn có chắc muốn đăng ký đề tài "${confirmRegister?.topic?.topicCode}"?`}
+        onConfirm={confirmRegisterTopic}
+        onCancel={() => setConfirmRegister(null)}
+        confirmText="Đăng ký"
+        cancelText="Hủy"
+      />
     </main>
   );
 }

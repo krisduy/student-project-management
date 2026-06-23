@@ -83,7 +83,6 @@ defenseScoreSchema.pre("save", function (next) {
   next();
 });
 
-defenseScoreSchema.index({ topicId: 1 }, { unique: true });
 defenseScoreSchema.index({ studentId: 1 });
 
 const DefenseScore = mongoose.model("DefenseScore", defenseScoreSchema);

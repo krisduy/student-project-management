@@ -17,7 +17,8 @@ class DefenseScoreService {
       searchQuery = {
         $or: [
           { "student.studentCode": { $regex: search, $options: "i" } },
-          { "student.userId.fullName": { $regex: search, $options: "i" } },
+          { "student.userId.firstName": { $regex: search, $options: "i" } },
+          { "student.userId.lastName": { $regex: search, $options: "i" } },
           { "topic.topicCode": { $regex: search, $options: "i" } },
           { "topic.topicName": { $regex: search, $options: "i" } },
         ],
@@ -86,7 +87,13 @@ class DefenseScoreService {
       },
     ];
 
+    console.log("matchStage:", matchStage);
+    console.log("pipeline:", JSON.stringify(pipeline, null, 2));
+
     const results = await Progress.aggregate(pipeline);
+
+    console.log("results:", JSON.stringify(results, null, 2));
+
     const data = results[0]?.data || [];
     const total = results[0]?.total[0]?.count || 0;
 

@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import AdminSidebar from "../components/AdminSidebar.jsx";
+import ConfirmModal from "../components/ConfirmModal.jsx";
 import { createTopic, deleteTopic, listTopics, updateTopic } from "../lib/api.js";
 
 const emptyForm = { topicCode: "", topicName: "" };
@@ -63,6 +64,7 @@ export default function AdminTopicsPage() {
   const [editingTopic, setEditingTopic] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [isSaving, setIsSaving] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
 
   const filteredTopics = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -149,15 +151,20 @@ export default function AdminTopicsPage() {
   }
 
   async function handleDelete(topic) {
-    if (!window.confirm(`Xóa đề tài ${topic.topicCode}?`)) return;
+    setConfirmDelete(topic);
+  }
+
+  async function confirmDeleteTopic() {
     setError("");
     setNotice("");
     try {
-      await deleteTopic(getId(topic));
+      await deleteTopic(getId(confirmDelete));
       setNotice("Đã xóa đề tài.");
       await loadData();
     } catch (err) {
       setError(err.message || "Không thể xóa đề tài.");
+    } finally {
+      setConfirmDelete(null);
     }
   }
 
@@ -312,6 +319,17 @@ export default function AdminTopicsPage() {
           </form>
         </div>
       ) : null}
+
+      <ConfirmModal
+        isOpen={!!confirmDelete}
+        title="Xác nhận xóa"
+        message={`Bạn có chắc muốn xóa đề tài "${confirmDelete?.topicCode}"? Hành động này không thể hoàn tác.`}
+        onConfirm={confirmDeleteTopic}
+        onCancel={() => setConfirmDelete(null)}
+        confirmText="Xóa"
+        cancelText="Hủy"
+        danger
+      />
     </main>
   );
 }
